@@ -116,9 +116,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-while [[ ! -f "/tmp/crossgame.ready" ]]; do
-    sleep 0.5
-done
+#while [[ ! -f "/tmp/crossgame.ready" ]]; do
+#    sleep 0.5
+#done
 
 ######## Check updates ########
 
@@ -131,4 +131,6 @@ if [[ -f "/tmp/needreboot" ]]; then
 else
     python3 /usr/bin/installDependencies.py
     startx
+    echo "[$(date +'%m/%d/%Y %H:%M:%S')] App ended!" >> "/var/log/product/apptk.log"
+    loadkeys es
 fi
