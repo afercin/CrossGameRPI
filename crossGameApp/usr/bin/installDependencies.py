@@ -17,7 +17,7 @@ class installDependencies:
     def install(self):
         self.log.info("Comprobando si hay dependencias por instalar...")
         
-        version = subprocess.getoutput("dpkg -l | grep crossgameapp | awk '{ print $3 }")
+        version = subprocess.getoutput("dpkg -l | grep crossgameapp | awk '{print $3}' | head -1").replace("'", "")
         if version > self.version:
             self.log.info("Detectado cambio de versión, comprobando las dependencias...")
             
