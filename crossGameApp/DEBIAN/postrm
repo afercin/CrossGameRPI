@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ -d "/usr/share/apptk" ]]; then
+    rm -r "/usr/share/apptk"
+fi

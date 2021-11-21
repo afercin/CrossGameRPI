@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#establecer contraseña root
+sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
+
+#Iniciar equipo sin gui
+systemctl set-default multi-user
+
+if [[ ! -d "/etc/productConf" ]]; then
+    sudo mkdir "/etc/productConf"
+    sudo chmod 777 "/etc/productConf"
+fi
+
+#Establecer zona horaria
+sudo timedatectl set-timezone Europe/Madrid 

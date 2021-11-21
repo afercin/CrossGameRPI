@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [[ -f "/home/crossgame/.bashrc" ]]; then
+    cp "/home/crossgame/.bashrc" "/home/crossgame/.bashrc.back"
+fi
+
+if [[ -f "/etc/ssh/sshd_conf" ]]; then
+    cp "/etc/ssh/sshd_config" "/etc/ssh/sshd_config.back"
+fi
