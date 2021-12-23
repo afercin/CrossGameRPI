@@ -1,0 +1,16 @@
+{
+    "rootFolder": "/usr/share/apptk",
+    "emulatorList":
+    {
+        "ePSXe":
+        {
+            "roms": "",
+            "args": ""
+        },
+        "pcsx2":
+        {
+            "roms": "",
+            "args": ""
+        }
+    }
+}
