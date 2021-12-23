@@ -7,8 +7,10 @@ chmod 775 ./*/DEBIAN/*
 compilationNumber=$(cat ./crossGameApp/DEBIAN/control | grep Version | awk '{print $2}')
 newNumber=$(echo $compilationNumber | tr "." " " | awk '{print $1 "." $2 "." (($3+1))}')
 
-sed -i "s/$compilationNumber/$newNumber/" "./crossGameApp/DEBIAN/control"
-sed -i "s/$compilationNumber/$newNumber/" "./crossGameServer/DEBIAN/control"
+for folder in $(find . -maxdepth 1 -name "crossGame*" -type d)
+do
+    sed -i "s/$compilationNumber/$newNumber/" "$folder/DEBIAN/control"
+done
 
 echo "##########################################################################"
 echo "###################### Building new version ($newNumber) ######################"
