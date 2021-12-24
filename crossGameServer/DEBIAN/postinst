@@ -6,6 +6,9 @@ sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
 #Iniciar equipo sin gui
 systemctl set-default multi-user
 
+#Deshabilitar apagado automático
+systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+
 if [[ ! -d "/etc/productConf" ]]; then
     sudo mkdir "/etc/productConf"
     sudo chmod 777 "/etc/productConf"
