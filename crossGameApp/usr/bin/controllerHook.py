@@ -1,6 +1,7 @@
 import pygame
 import threading
 import time
+import os
 from logUtils import logUtils 
 from datetime import datetime
 from event import *
@@ -19,10 +20,14 @@ class controller:
     PS = 10
     L3 = 11
     R3 = 12
-    LEFT = 13
-    UP = 14  
-    RIGHT = 15
-    DOWN = 16
+    L_LEFT = 13
+    L_UP = 14  
+    L_RIGHT = 15
+    L_DOWN = 16
+    R_LEFT = 17
+    R_UP = 18
+    R_RIGHT = 19
+    R_DOWN = 20
 
 class controllerHook(Observer):
     def __init__(self, inactivityTime, verbose = False):
@@ -34,7 +39,7 @@ class controllerHook(Observer):
         self.verbose = verbose
 
         self.joysticks = []
-        self.button=[False] * 17
+        self.button=[False] * 21
         self.deadzone=0.3
 
         self.KeyDown = None
@@ -82,13 +87,17 @@ class controllerHook(Observer):
         self.pause = False
     
     def checkInputs(self):    
-        def sendKey(pressed, buttonNumber):
-            if pressed:
-                if self.KeyDown:
+        def sendKey(pressed, buttonNumber):            
+            if pressed:                    
+                if self.KeyDown and not self.pause:
                     Event("OnKeyDown", buttonNumber)
                 self.button[buttonNumber] = True
+                if self.button[controller.START] and self.button[controller.SELECT]:
+                    os.system("shutdown -f 0")
+                if self.button[controller.SELECT] and self.button[controller.PS]:
+                    os.system("restartx")
             else:
-                if self.KeyUp:
+                if self.KeyUp and not self.pause:
                     Event("OnKeyUp", buttonNumber)
                 self.button[buttonNumber] = False
             self.lastInput = datetime.now()
@@ -114,9 +123,6 @@ class controllerHook(Observer):
         self.lastInput = datetime.now()
         show = False
         while not self.end:
-            while self.pause:
-                time.sleep(1)
-
             while len(self.joysticks) == 0 or (datetime.now() - self.lastInput).total_seconds() >= self.inactivityTime:
                 if len(self.joysticks) == 0:
                     if not show:
@@ -129,31 +135,50 @@ class controllerHook(Observer):
             
             show = False
 
-            for event in pygame.event.get(eventtype=[1538,1539,1540]): #1536 joys and triggers
+            for event in pygame.event.get(eventtype=[1538,1539,1540,1536]): #1536 joys and triggers
                 if event.type == 1538:
                     x, y = event.value
 
                     if self.button[13] and x == 0:
-                        sendKey(False, controller.LEFT)
+                        sendKey(False, controller.L_LEFT)
                     elif self.button[14] and y == 0:
-                        sendKey(False, controller.UP)
+                        sendKey(False, controller.L_UP)
                     elif self.button[15] and x == 0:
-                        sendKey(False, controller.RIGHT)
+                        sendKey(False, controller.L_RIGHT)
                     elif self.button[16] and y == 0:
-                        sendKey(False, controller.DOWN)
+                        sendKey(False, controller.L_DOWN)
 
                     if not self.button[13] and x == -1:
-                        sendKey(True, controller.LEFT)
+                        sendKey(True, controller.L_LEFT)
                     elif not self.button[14] and y == 1:
-                        sendKey(True, controller.UP)
+                        sendKey(True, controller.L_UP)
                     elif not self.button[15] and x == 1:
-                        sendKey(True, controller.RIGHT)
+                        sendKey(True, controller.L_RIGHT)
                     elif not self.button[16] and y == -1:
-                        sendKey(True, controller.DOWN)
+                        sendKey(True, controller.L_DOWN)
 
                 elif event.type in (1539, 1540):
                     sendKey(event.type == 1539, event.button)
-
+                else:
+                    deadzone = 0.4
+                    key=""
+                    if event.axis in (0,1,3,4): # L=1,2; R=3,4; LT=2; RT=5
+                        if event.axis == 0:                                
+                            key = controller.L_LEFT if event.value < 0 else controller.L_RIGHT
+                        elif event.axis == 1:
+                            key = controller.L_UP if event.value < 0 else controller.L_DOWN
+                        if event.axis == 3:                                
+                            key = controller.R_LEFT if event.value < 0 else controller.R_RIGHT
+                        elif event.axis == 4:
+                            key = controller.R_UP if event.value < 0 else controller.R_DOWN
+                            
+                        if event.value > deadzone or event.value < -deadzone:                            
+                            if not self.button[key]:
+                                sendKey(True, key)
+                        else:
+                            if self.button[key]:
+                                sendKey(False, key)
+                            
             time.sleep(0.05)
 
 if __name__ == "__main__":
