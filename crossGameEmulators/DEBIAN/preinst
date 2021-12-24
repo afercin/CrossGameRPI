@@ -1,1 +1,6 @@
 #!/bin/bash
+
+mkdir "/usr/share/apptk/roms"
+
+mkdir "/usr/share/apptk/emulators"
+mkdir "/usr/share/apptk/emulators/duckstation"

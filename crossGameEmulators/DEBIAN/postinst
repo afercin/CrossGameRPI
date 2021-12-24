@@ -1,1 +1,11 @@
 #!/bin/bash
+
+emulators="/usr/share/apptk/emulators"
+
+#Compiling psx emulator
+
+git clone "https://github.com/stenzek/duckstation.git" -b dev
+mv "./duckstation" "/tmp/"
+
+cmake -DCMAKE_BUILD_TYPE=Release -GNinja -EXECUTABLE_OUTPUT_PATH="$emulators/duckstation" "/tmp/duckstation/"
+ninja -C "$emulators/duckstation"
