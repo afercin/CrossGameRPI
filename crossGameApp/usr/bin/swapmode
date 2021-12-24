@@ -1,0 +1,17 @@
+#!/bin/bash
+
+mode=""
+
+case $1 in
+    "t")
+        mode="multi-user"
+        reboot
+    ;;
+    "g")
+        mode="graphical"
+    ;;
+esac
+
+if [[ ! -z $mode ]]; then
+    sudo systemctl start "${mode}.target"
+fi
