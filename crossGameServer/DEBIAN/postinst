@@ -14,5 +14,9 @@ if [[ ! -d "/etc/productConf" ]]; then
     sudo chmod 777 "/etc/productConf"
 fi
 
+#Añadir privilegios de ejecución para los scripts
+chmod 777 "/usr/bin/restartx"
+chmod 777 "/usr/bin/swapmode"
+
 #Establecer zona horaria
 sudo timedatectl set-timezone Europe/Madrid 
