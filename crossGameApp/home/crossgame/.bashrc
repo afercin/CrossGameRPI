@@ -130,7 +130,7 @@ if [[ -f "/tmp/needreboot" ]]; then
     reboot
 else
     python3 /usr/bin/installDependencies.py
-    startx
-    echo "[$(date +'%m/%d/%Y %H:%M:%S')] App ended!" >> "/var/log/product/apptk.log"
-    loadkeys es
+    while true; do
+        startx
+    done
 fi
