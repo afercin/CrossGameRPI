@@ -1,5 +1,6 @@
 import pygame
 import threading
+import subprocess
 import time
 import os
 from logUtils import logUtils 
@@ -92,10 +93,10 @@ class controllerHook(Observer):
                 if self.KeyDown and not self.pause:
                     Event("OnKeyDown", buttonNumber)
                 self.button[buttonNumber] = True
-                if self.button[controller.SELECT] and self.button[controller.START]:
-                    self.log.info("Powering off")
-                    os.system("shutdown -f 0")
                 if self.button[controller.PS] and self.button[controller.SELECT]:
+                    self.log.info("Powering off")
+                    os.system("shutdown -f 0")                    
+                if self.button[controller.SELECT] and self.button[controller.START]:
                     self.log.info("Restarting X")
                     os.system("/usr/bin/restartx")
             else:
@@ -111,7 +112,14 @@ class controllerHook(Observer):
                 if len(self.joysticks) < pygame.joystick.get_count():
                     for i in range(len(self.joysticks), pygame.joystick.get_count()):
                         self.joysticks.append(pygame.joystick.Joystick(i))
-                        self.log.info("Controller \"{}\" added in slot {}!".format(self.joysticks[i].get_name(), i))
+                        name = str(self.joysticks[i].get_name())
+                        self.log.info("Controller \"{}\" added in slot {}!".format(name, i))
+                        
+                        if i == 0:
+                            sink = subprocess.check_output("pacmd list-sinks | grep -B 1 -m 1 {} | head -1".format(name.replace(" ", "_")), shell=True, text=True).split(":")[1][1:2]
+                            if sink != "index:":
+                                os.system("pacmd set-default-sink {}".format(sink))
+                                self.log.info("Redirected audio to {} (sink nº {})!".format(name, sink))
                 else:
                     joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
                     if len(self.joysticks) > len(joysticks):
