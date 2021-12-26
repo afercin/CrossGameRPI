@@ -17,6 +17,16 @@ fi
 #Añadir privilegios de ejecución para los scripts
 chmod 777 "/usr/bin/restartx"
 chmod 777 "/usr/bin/swapmode"
+chmod 777 "/usr/bin/automount"
 
 #Establecer zona horaria
 sudo timedatectl set-timezone Europe/Madrid 
+
+#Crear carpeta para punto de montaje del HDD
+mkdir "/mnt/hdd"
+chown crossgame:crossgame "/mnt/hdd"
+
+#Habilitar servicio de automontage
+systemctl daemon-reload
+systemctl enable automount.service
+systemctl start automount.service

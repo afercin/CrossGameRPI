@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while true; do
+    if ! ls /mnt/hdd/rpi > /dev/null 2>&1; then
+        if lsusb | grep SATA -q; then
+            mount /dev/sda1 /mnt/hdd
+        fi
+    fi
+    sleep 5
+done
