@@ -1,10 +1,43 @@
 #!/bin/bash
 
-while true; do
-    if ! ls /mnt/hdd/rpi > /dev/null 2>&1; then
-        if lsusb | grep SATA -q; then
-            mount /dev/sda1 /mnt/hdd
+msg()
+{
+    echo "[$(date +'%m/%d/%Y %H:%M:%S')][$1] $2"
+}
+
+msgImfo()
+{
+    msg "INFO" "$1"
+}
+
+msgOk()
+{
+    msg "OK" "$1"
+}
+
+msgWarn()
+{
+    msg "WARN" "$1"
+}
+
+msgError()
+{
+    msg "ERROR" "$1"
+}
+
+{
+    while true; do
+        if ! ls /mnt/hdd/rpi > /dev/null 2>&1; then
+            msgWarn "Folder /mnt/hdd/rpi does not exist!"
+            if lsusb | grep SATA -q; then
+                msgInfo "Found sda1 partition!"
+                if mount /dev/sda1 /mnt/hdd > /dev/null 2>&1; then
+                    msgOk "Partition sda1 mounted into /mnt/hdd!"
+                else
+                    msgError "Cannot mount sda1 partition"
+                fi
+            fi
         fi
-    fi
-    sleep 5
-done
+        sleep 5
+    done
+} >> "/var/log/product/automount.log"
