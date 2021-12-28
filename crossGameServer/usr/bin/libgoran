@@ -22,7 +22,7 @@ LGRAY='\033[1;37m'
 ##Functions
 currentDate()
 {
-    date +'%d/%m/%Y %H:%M:%S'
+    date +'%Y/%m/%d %H:%M:%S'
 }
 
 msg()

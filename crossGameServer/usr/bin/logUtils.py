@@ -27,7 +27,7 @@ class logUtils():
     def write(self, msg, date=True):        
         f = open(self.filename, "a")
         if date:
-            msg = "[{}]{}".format(datetime.now().strftime(format="%d/%m/%Y %H:%M:%S"), msg)
+            msg = "[{}]{}".format(datetime.now().strftime(format="%Y/%m/%d %H:%M:%S"), msg)
             f.write("{}\n".format(msg))
             if self.verbose:
                 print(msg)
