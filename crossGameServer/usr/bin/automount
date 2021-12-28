@@ -1,30 +1,13 @@
 #!/bin/bash
+## Static vars
+SCRIPTNAME="automount"
 
-msg()
-{
-    echo "[$(date +'%m/%d/%Y %H:%M:%S')][$1] $2"
-}
+## Call to libgoran
+. ./libgoran
 
-msgImfo()
-{
-    msg "INFO" "$1"
-}
-
-msgOk()
-{
-    msg "OK" "$1"
-}
-
-msgWarn()
-{
-    msg "WARN" "$1"
-}
-
-msgError()
-{
-    msg "ERROR" "$1"
-}
-
+## Code
+vflag="true"
+mounted="false"
 {
     while true; do
         if ! ls /mnt/hdd/rpi > /dev/null 2>&1; then
@@ -33,11 +16,15 @@ msgError()
                 msgInfo "Found sda1 partition!"
                 if mount /dev/sda1 /mnt/hdd > /dev/null 2>&1; then
                     msgOk "Partition sda1 mounted into /mnt/hdd!"
+                    mounted="true"
                 else
                     msgError "Cannot mount sda1 partition"
                 fi
+            else
+                msgWarn "There is no SATA connected!"
             fi
         fi
+        [[ $mounted == "false" ]] && msgInfo "Waiting 5 seconds..."
         sleep 5
     done
-} >> "/var/log/product/automount.log"
+}
