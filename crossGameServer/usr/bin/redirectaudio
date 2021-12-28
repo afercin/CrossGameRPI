@@ -1,0 +1,69 @@
+#!/bin/bash
+## Static vars
+SCRIPTNAME="redirectaudio"
+vflag="false"
+lflag="false"
+nflag="false"
+sflag="false"
+name=""
+sink=""
+
+## Call to libgoran
+. ./libgoran
+
+## Functions
+setSink()
+{
+    if pacmd set-default-sink $1; then
+        msgOk "Audio redirected to $name($1)"
+    else
+        msgError "Shit happends"
+    fi
+}
+
+## Code
+
+while getopts vln:s: flag
+do
+    case "${flag}" in
+        v) vflag="true";;
+        l) lflag="true";;
+        n) nflag="true"
+           name=${OPTARG};;
+        s) sflag="true"
+           sink=${OPTARG};;
+        *) echo "redirectaudio [-l] [-n sinkName] [-s sinkNumber] [-v]"
+           exit 1
+        ;;
+    esac
+done
+
+if [[ $lflag == "true" ]]; then
+    declare -i i=0
+    sinklist=$(pacmd list-sinks)
+    sinks=$(echo "$sinklist" | grep "name:" | cut -d "." -f2)
+    default=$(echo "$sinklist" | grep index: | awk '{ if($1 != "index:")print $1;else print ""; }' | tr "\n" " ")
+    for output in ${sinks[@]}; do
+        echo "$i) ${default:i:1}${output}"
+        ((i ++))
+    done
+    exit 0
+fi
+
+if [[ $nflag == "true" ]]; then
+    sink=$(pacmd list-sinks | grep -B 1 -m 1 $name | head -1 | awk '{ print $2 }')
+    msgInfo "Redirecting audio to $name..."
+    if [[ $sink == "index:" ]]; then
+        msgWarn "Audio is currently at $name!"
+    elif [[ ! -z $sink ]]; then
+        setSink $sink
+    else
+        msgError "Can not find sink with name \"$name\"!"
+    fi
+    exit 0
+fi
+
+if [[ $sflag == "true" ]]; then
+    setSink $sink
+    exit 0
+fi

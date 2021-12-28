@@ -116,10 +116,7 @@ class controllerHook(Observer):
                         self.log.info("Controller \"{}\" added in slot {}!".format(name, i))
                         
                         if i == 0:
-                            sink = subprocess.check_output("pacmd list-sinks | grep -B 1 -m 1 {} | head -1".format(name.replace(" ", "_")), shell=True, text=True).split(":")[1][1:2]
-                            if sink != "index:":
-                                os.system("pacmd set-default-sink {}".format(sink))
-                                self.log.info("Redirected audio to {} (sink nº {})!".format(name, sink))
+                            os.system("redirectaudio -n {}".format(name.replace(" ", "_")))
                 else:
                     joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
                     if len(self.joysticks) > len(joysticks):
