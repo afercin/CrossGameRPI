@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 from datetime import datetime
 
 #Static program vars
-pin = 11 #Input pin of sensor (GPIO.BOARD)
+pin = 12 #Input pin of sensor (GPIO.BOARD)
 Buttons = [0x300ff9867, 0x300ffd827, 0x300ff8877, 0x300ffa857, 0x300ffe817, 0x300ff48b7, 0x300ff6897, 0x300ff02fd, 0x300ff32cd, 0x300ff20df] #HEX code list
 ButtonsNames = ["RED",   "GREEN",      "BLUE",       "WHITE",      "DARK ORANGE","LIGHT GREEN","DARK BLUE",  "VIBRANT ORANGE","LIGHT BLUE","DARK PURPLE"] #String list in same order as HEX list
 
@@ -12,6 +12,7 @@ GPIO.setup(pin, GPIO.IN)
 
 #Gets binary value
 def getBinary():
+	print("Busco otro valor")
 	#Internal vars
 	num1s = 0 #Number of consecutive 1s read
 	binary = 1 #The bianry value
@@ -22,7 +23,7 @@ def getBinary():
 	#Waits for the sensor to pull pin low
 	while value:
 		value = GPIO.input(pin)
-		
+	print("Valor actual del GPIO: " + str(value))
 	#Records start time
 	startTime = datetime.now()
 	
@@ -33,6 +34,7 @@ def getBinary():
 			pulseTime = now - startTime #Calculate the time of pulse
 			startTime = now #Reset start time
 			command.append((previousValue, pulseTime.microseconds)) #Store recorded data
+			print("Nuevo valor del GPIO: " + str(value))
 			
 		#Updates consecutive 1s variable
 		if value:
@@ -47,7 +49,9 @@ def getBinary():
 		#Re-reads pin
 		previousValue = value
 		value = GPIO.input(pin)
-		
+
+	print("Valor del GPIO tras salir del bucle: " + str(value))
+ 
 	#Converts times to binary
 	for (typ, tme) in command:
 		if typ == 1: #If looking at rest period
@@ -68,6 +72,7 @@ def convertHex(binaryValue):
 	
 while True:
 	inData = convertHex(getBinary()) #Runs subs to get incomming hex value
+	print("Valor devuelto: " + str(inData))
 	for button in range(len(Buttons)):#Runs through every value in list
 		if hex(Buttons[button]) == inData: #Checks this against incomming
 			print(ButtonsNames[button]) #Prints corresponding english name for button
