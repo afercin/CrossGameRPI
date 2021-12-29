@@ -36,3 +36,8 @@ sudo chmod 777 "/var/log/product"
 systemctl daemon-reload
 systemctl enable automount.service
 systemctl start automount.service
+
+#Configurar Samba
+PASS="patata123"
+echo -ne "$PASS\n$PASS\n" | smbpasswd -a -s "root"
+sudo service smbd restart
