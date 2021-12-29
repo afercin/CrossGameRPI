@@ -1,3 +1,19 @@
 #!/bin/bash
+uflag="false"
+tty="tty1"
 
-kill $(ps aux | grep xorg | grep tty1 | awk '{ print $2 }')
+while getopts ut: flag
+do
+    case "${flag}" in
+        u) uflag="true";;
+        t) tty="tty${OPTARG}";;
+        *) ;;
+    esac
+done
+
+if [[ $uflag == "true" ]]; then
+    pkill -9 -t $tty
+    exit 0
+fi
+
+kill $(ps aux | grep xorg | grep $tty | awk '{ print $2 }')
