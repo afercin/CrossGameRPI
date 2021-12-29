@@ -1,0 +1,83 @@
+#!/bin/bash
+## Static vars
+SCRIPTNAME="resorepoint"
+BACKUPFOLDER="/mnt/hdd/rpi/backups"
+cflag="false"
+fflag="false"
+vflag="false"
+xflag="false"
+
+## Call to libgoran
+. /usr/bin/libgoran
+
+## Code
+
+while getopts vcxf: flag
+do
+    case "${flag}" in
+        x) xflag="true";;
+        f) fflag="true"
+           filename=${OPTARG};;
+        c) cflag="true";;
+        v) vflag="true";;
+        *) echo "restorepoint -c|x [-f filename] [-v]"
+           exit 1
+        ;;
+    esac
+done
+
+if [[ $cflag == "true" ]]; then
+    if [[ $fflag == "false" ]]; then
+        d=$(currentDate | tr "/" "-" | tr " " "_" | tr ":" "-")
+        filename="${BACKUPFOLDER}/$d.tar.gz"
+        msgWarn "Using default filename \"$filename\"!"
+    fi
+    msgInfo "Creating backup file in \"$filename\"..."
+    if tar --exclude=/mnt \
+        --exclude=/dev \
+        --exclude=/.disk \
+        --exclude=/lost+found \
+        --exclude=/media \
+        --exclude=/proc \
+        --exclude=/run \
+        --exclude=/snap \
+        --exclude=/swapfile \
+        --exclude=/sys \
+        --exclude=/var/backups \
+        --exclude=/var/lock \
+        --exclude=/var/log \
+        --exclude=/var/tmp \
+        --exclude=/var/run \
+        --exclude=/tmp \
+        -zcf "$filename" / 2> /dev/null; then
+        msgOk "Backup created sucessfully!"
+    else
+        msgError "Can not create backup!"
+        exit 1
+    fi
+    exit 0
+fi
+
+if [[ $xflag == "true" ]]; then
+    if [[ $fflag == "false" ]]; then
+        msgError "Backup file not selected!"
+        exit 1
+    fi
+    msgInfo "Restoring system with backup \"$filename\"..."
+    if tar -zxf "$filename" /; then
+        msgOK "Files from \"$filename\" restored!"
+    else
+        msgError "\"$filename\" is corrupted!"
+        msgError "Aborting process!"
+        exit 1
+    fi
+    msgInfo "Rebooting System"
+    for logfile in $(ls /var/log/product); do
+        {
+            echo "◤━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◥"
+            echo "                                          SYSTEM RESTORED                                           "
+            echo "◣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━◢"
+        } >> $logfile
+    done
+    reboot
+fi

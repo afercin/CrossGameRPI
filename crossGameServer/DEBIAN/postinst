@@ -19,6 +19,7 @@ chmod 777 "/usr/bin/restartx"
 chmod 777 "/usr/bin/swapmode"
 chmod 777 "/usr/bin/automount"
 chmod 777 "/usr/bin/redirectaudio"
+chmod 777 "/usr/bin/restorepoint"
 
 #Establecer zona horaria
 sudo timedatectl set-timezone Europe/Madrid 
