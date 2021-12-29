@@ -126,11 +126,9 @@ fi
 
 ###############################
 
-if [[ -f "/tmp/needreboot" ]]; then
-    reboot
-else
-    python3 /usr/bin/installDependencies.py
-    while true; do
-        startx
-    done
-fi
+[[ -f "/tmp/needreboot" ]] && reboot
+
+python3 /usr/bin/installDependencies.py
+while true; do
+    startx
+done
