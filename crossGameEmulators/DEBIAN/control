@@ -3,7 +3,8 @@ Version: 0.1.2
 Architecture: all
 Depends: crossGameApp, libsdl2-dev, libxrandr-dev, pkg-config, qtbase5-dev, qtbase5-private-dev,
  qtbase5-dev-tools, qttools5-dev, libevdev-dev, libwayland-dev, libwayland-egl-backend-dev,
- extra-cmake-modules, libcurl4-gnutls-dev, libgbm-dev, libdrm-dev, ninja-build 
+ extra-cmake-modules, libcurl4-gnutls-dev, libgbm-dev, libdrm-dev, ninja-build, build-essential,
+ cmake, libgl1-mesa-dev, libvulkan-dev
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: A program that greets you.
  You can add a longer description here. Mind the space at the beginning of this paragraph.

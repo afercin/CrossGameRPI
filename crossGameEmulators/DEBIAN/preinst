@@ -1,6 +1,3 @@
 #!/bin/bash
 
-mkdir "/usr/share/apptk/roms"
-
-mkdir "/usr/share/apptk/emulators"
-mkdir "/usr/share/apptk/emulators/duckstation"
+[[ ! -d "/usr/share/server/emulators" ]] && mkdir "/usr/share/server/emulators"

@@ -1,11 +1,40 @@
 #!/bin/bash
 
-emulators="/usr/share/apptk/emulators"
+[[ -d "/tmp/emulators" ]] && rm -r "/tmp/emulators"
+[[ ! -d "/usr/share/server/emulators" ]] && mkdir -p "/usr/share/server/emulators"
+
+mkdir "/tmp/emulators"
+
+emulators="/usr/share/server/emulators"
+tmpfolder="/tmp/emulators"
 
 #Compiling psx emulator
+if [[ ! -d "$emulators/duckstation" ]]; then
+    git clone "https://github.com/stenzek/duckstation.git" -b dev "$tmpfolder/duckstation"
+    mkdir "$tmpfolder/duckstation/build/"
+    cd "$tmpfolder/duckstation/build"
+    cmake -DCMAKE_BUILD_TYPE=Release -GNinja "$tmpfolder/duckstation/"
+    ninja 
+    mv "$tmpfolder/duckstation/build/bin" "$emulators/duckstation"
+fi
 
-git clone "https://github.com/stenzek/duckstation.git" -b dev
-mv "./duckstation" "/tmp/"
+#Compiling ps2 emulator
+if [[ ! -d "$emulators/play-" ]]; then
+    git clone --recurse-submodules "https://github.com/jpd002/Play-.git" "$tmpfolder/play-"
+    mkdir "$tmpfolder/play-/build/"
+    cd "$tmpfolder/play-/build"
+    sed -i "s/ OR TARGET_PLATFORM_UNIX_ARM OR TARGET_PLATFORM_UNIX_AARCH64//" "$tmpfolder/play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt"
+    cmake -G Ninja -DCMAKE_PREFIX_PATH=/opt/qt56/ "$tmpfolder/play-/"
+    cmake --build "$tmpfolder/play-/build" --config Release
+    mv "/$tmpfolder/play-/build/Source/ui_qt" "$emulators/play-"
+fi
 
-cmake -DCMAKE_BUILD_TYPE=Release -GNinja -EXECUTABLE_OUTPUT_PATH="$emulators/duckstation" "/tmp/duckstation/"
-ninja -C "$emulators/duckstation"
+# Compiling psp emulator
+if [[ ! -d "$emulators/ppsspp" ]]; then
+    git clone --recurse-submodules "https://github.com/hrydgard/ppsspp.git" "$tmpfolder/ppsspp"
+    mkdir "$tmpfolder/ppsspp/build/"
+    cd "$tmpfolder/ppsspp/build/"
+    cmake ..
+    cmake -j 4 ..
+    make install
+fi
