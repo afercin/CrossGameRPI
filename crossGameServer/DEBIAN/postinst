@@ -1,43 +1,51 @@
 #!/bin/bash
-
-#establecer contraseña root
-sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
-
-#Iniciar equipo sin gui
-systemctl set-default multi-user
-
-#Deshabilitar apagado automático
-systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-
+#Crear carpetas usadas por el sistema
 if [[ ! -d "/etc/productConf" ]]; then
     sudo mkdir "/etc/productConf"
     sudo chmod 777 "/etc/productConf"
 fi
 
+if [[ ! -d "/var/log/product" ]]; then
+    sudo mkdir "/var/log/product"
+    sudo chmod 777 "/var/log/product"
+fi
+
+if [[ ! -d "/mnt/hdd" ]]; then
+    mkdir "/mnt/hdd"
+    chown crossgame:crossgame "/mnt/hdd"
+fi
+
+[[ ! -d "/usr/share/server" ]] && mkdir "/usr/share/server"
+
 #Añadir privilegios de ejecución para los scripts
-chmod 777 "/usr/bin/restartx"
-chmod 777 "/usr/bin/swapmode"
-chmod 777 "/usr/bin/automount"
-chmod 777 "/usr/bin/redirectaudio"
-chmod 777 "/usr/bin/restorepoint"
+scripts=("restartx" "swapmode" "automount" "redirectaudio" "restorepoint")
+for script in ${scripts[@]}; do
+    chmod 777 "/usr/bin/${script}"
+done
 
-#Establecer zona horaria
-sudo timedatectl set-timezone Europe/Madrid 
+#Establecer contraseña root
+#sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
 
-#Crear carpeta para punto de montaje del HDD
-mkdir "/mnt/hdd"
-chown crossgame:crossgame "/mnt/hdd"
+#Iniciar equipo sin gui
+systemctl set-default multi-user
 
-#Crear carpeta para logs
-sudo mkdir -p "/var/log/product"
-sudo chmod 777 "/var/log/product"
+#Deshabilitar apagado automático
+#systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 #Habilitar servicio de automontage
 systemctl daemon-reload
 systemctl enable automount.service
 systemctl start automount.service
 
+#Establecer zona horaria
+sudo timedatectl set-timezone Europe/Madrid 
+
 #Configurar Samba
 PASS="patata123"
 echo -ne "$PASS\n$PASS\n" | smbpasswd -a -s "root"
 sudo service smbd restart
+
+#Instalar docker-compose
+version="2.2.2"
+sudo curl -L "https://github.com/docker/compose/releases/download/v${version}/docker-compose-linux-aarch64" -o "/usr/local/bin/docker-compose"
+sudo chmod +x "/usr/local/bin/docker-compose"

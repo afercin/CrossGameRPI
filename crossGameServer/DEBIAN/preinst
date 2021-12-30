@@ -7,3 +7,7 @@ fi
 if [[ -f "/etc/ssh/sshd_conf" ]]; then
     cp "/etc/ssh/sshd_config" "/etc/ssh/sshd_config.back"
 fi
+
+if [[ -f "/etc/samba/smb.conf" ]]; then
+    cp "/etc/samba/smb.conf" "/etc/samba/smb.conf.back"
+fi
