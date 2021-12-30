@@ -37,4 +37,6 @@ if [[ ! -d "$emulators/ppsspp" ]]; then
     cmake ..
     cmake -j 4 ..
     make install
+    mkdir "$emulators/ppsspp"
+    cp "$tmpfolder/ppsspp/build/PPSSPPSDL" "$emulators/ppsspp/"
 fi
