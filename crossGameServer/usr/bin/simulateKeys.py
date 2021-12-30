@@ -1,5 +1,9 @@
 #!/usr/bin/python
-import sys, getopt, os, time
+import sys
+import getopt
+import os
+import time
+
 
 def _find_getch():
     try:
@@ -10,7 +14,9 @@ def _find_getch():
         return msvcrt.getch
 
     # POSIX system. Create and return a getch that manipulates the tty.
-    import sys, tty
+    import sys
+    import tty
+
     def _getch():
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
@@ -23,12 +29,13 @@ def _find_getch():
 
     return _getch
 
+
 def main(argv):
     sflag = False
     cflag = False
-    file="/tmp/keys"
+    file = "/tmp/keys"
     try:
-        opts, args=getopt.getopt(argv, "hsc")
+        opts, args = getopt.getopt(argv, "hsc")
     except getopt.GetoptError:
         print("simulateKeys.py -c")
         sys.exit(2)
@@ -37,11 +44,11 @@ def main(argv):
             print("simulateKeys.py -c")
             sys.exit()
         elif opt == "-c":
-            cflag = True;
+            cflag = True
             resolution = arg
         elif opt == "-s":
             sflag = True
-            
+
     if sflag:
         from pynput.keyboard import Controller, Key
         os.system("echo '' > " + file)
@@ -74,22 +81,23 @@ def main(argv):
                     key = f.read()
                     if len(key) > 1:
                         key = SPECIALKEYS[key]
-                    os.system("echo 'Simulating: {}' >> /tmp/pruebakeys".format(key))
+                    os.system(
+                        "echo 'Simulating: {}' >> /tmp/pruebakeys".format(key))
                     keyboard.press(key)
                     keyboard.release(key)
                 os.system("rm /tmp/keylock")
                 tiempo = os.path.getmtime(file)
-            time.sleep(0.025);
-    
+            time.sleep(0.025)
+
     if cflag:
         print("Capturing input... Press CTRL + C to exit")
         os.system("rm /tmp/keylock")
-        getch=_find_getch()
+        getch = _find_getch()
         key = "a"
         while ord(key) != 3:
             key = getch()
             while os.path.isfile("/tmp/keylock"):
-                time.sleep(0.025);
+                time.sleep(0.025)
             if ord(key) == 27:
                 specialKey = getch()
                 k = getch()
@@ -101,13 +109,14 @@ def main(argv):
                 key = str(ord(key))
             elif ord(key) == 9:
                 key = "tab"
-            if len(key) > 1 or ord(key) != 3: #ctrl + c
+            if len(key) > 1 or ord(key) != 3:  # ctrl + c
                 os.system("echo '' > /tmp/keylock")
                 with open(file, "w") as f:
                     f.write(str(key))
                 os.system("rm /tmp/keylock")
             if len(key) > 1:
                 key = "a"
-            
+
+
 if __name__ == "__main__":
     main(sys.argv[1:])
