@@ -1,3 +1,4 @@
-*.pyc
+*__pycache__
 *deb
-.vscode/launch.json
+.vscode
+build
