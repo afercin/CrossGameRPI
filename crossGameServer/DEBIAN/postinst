@@ -49,3 +49,6 @@ sudo service smbd restart
 version="2.2.2"
 sudo curl -L "https://github.com/docker/compose/releases/download/v${version}/docker-compose-linux-aarch64" -o "/usr/local/bin/docker-compose"
 sudo chmod +x "/usr/local/bin/docker-compose"
+
+#Installar netdata
+bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
