@@ -16,6 +16,7 @@ if [[ ! -d "$emulators/duckstation" ]]; then
     cmake -DCMAKE_BUILD_TYPE=Release -GNinja "$tmpfolder/duckstation/"
     ninja 
     mv "$tmpfolder/duckstation/build/bin" "$emulators/duckstation"
+    ln -s "/mnt/rpi/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
 fi
 
 #Compiling ps2 emulator
@@ -39,4 +40,5 @@ if [[ ! -d "$emulators/ppsspp" ]]; then
     make install
     mkdir "$emulators/ppsspp"
     cp "$tmpfolder/ppsspp/build/PPSSPPSDL" "$emulators/ppsspp/"
+    ln -s "/mnt/rpi/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
 fi
