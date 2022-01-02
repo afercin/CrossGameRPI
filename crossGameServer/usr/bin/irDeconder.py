@@ -4,47 +4,45 @@ from datetime import datetime
 from logUtils import logUtils
 from event import *
 
-#from pynput.keyboard import Controller, Key
-#pin = 12  # Input pin of sensor (GPIO.BOARD)
 
 class irDecoder(Observer):
-    
+
     def __init__(self, pin, verbose=False):
         Observer.__init__(self)
-        
+
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(pin, GPIO.IN)
-        
+
         self.log = logUtils(verbose=verbose)
         self.pin = pin
         self.end = True
-    
+
     def dispose(self):
         if not self.end:
             self.stop()
         self.log.dispose()
 
-        
     def start(self):
         if self.end:
             self.log.info("Initializeing IR decoder...")
             self.end = False
             self.pause = False
-            self.checkInputThread = multiprocessing.Process(target=self.checkInData)
+            self.checkInputThread = multiprocessing.Process(
+                target=self.checkInData)
             self.log.info("IR decoder initialized")
             self.checkInputThread.start()
-    
+
     def stop(self):
         self.end = True
         self.log.info("Stopping IR decoder...")
         if not self.checkInputThread.join(1):
             self.checkInputThread.terminate()
         self.log.info("IR decoder stopped!")
-        
-    def onDataReceived(self, eventHandler):        
+
+    def onDataReceived(self, eventHandler):
         self.dataReceived = True
         self.observe("OnDataReceived", eventHandler)
-        
+
     def checkInData(self):
         BUTTONS = {
             "0x300ffa25d": "1",
@@ -73,9 +71,8 @@ class irDecoder(Observer):
                         Event("OnDataReceived", BUTTONS[inData])
                     else:
                         self.log.error("Unknow value \"{}\"!".format(inData))
-            
 
-    def getInData(self):        
+    def getInData(self):
         def convertHex(binaryValue):
             tmpB2 = int(str(binaryValue), 2)  # Tempary propper base 2
             return hex(tmpB2)
@@ -92,7 +89,7 @@ class irDecoder(Observer):
             value = GPIO.input(self.pin)
         # Records start time
         startTime = datetime.now()
-        
+
         while num1s <= 10000 and not self.end:
             # If change detected in value
             if previousValue != value:
@@ -124,8 +121,8 @@ class irDecoder(Observer):
             binary = int(str(binary)[:34])
 
         return convertHex(binary)
-        
-                
+
+
 if __name__ == "__main__":
     def valueReceived(value):
         print("Received value: {}".format(value))
