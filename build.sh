@@ -28,4 +28,7 @@ echo
 echo "## Creating crossgameserver package..."
 dpkg-deb --build --root-owner-group ./crossGameServer
 echo
+echo "## Creating crossgameweb package..."
+dpkg-deb --build --root-owner-group ./crossGameWeb
+echo
 echo "## Done"
