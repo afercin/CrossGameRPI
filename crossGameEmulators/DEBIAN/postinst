@@ -1,46 +1,71 @@
 #!/bin/bash
 
-[[ -d "/tmp/emulators" ]] && rm -r "/tmp/emulators"
-[[ ! -d "/usr/share/server/emulators" ]] && mkdir -p "/usr/share/server/emulators"
+if [[ -d "/tmp/emulators" ]]; then
+    rm -r "/tmp/emulators"
+fi
 
 mkdir "/tmp/emulators"
 
 emulators="/usr/share/server/emulators"
 tmpfolder="/tmp/emulators"
 
-#Compiling psx emulator
 if [[ ! -d "$emulators/ps1" ]]; then
+    echo "Downloading PS1 emulator code..."
     git clone "https://github.com/stenzek/duckstation.git" -b dev "$tmpfolder/ps1"
+
+    echo "Compiling PS1 emulator..."
     mkdir "$tmpfolder/ps1/build/"
     cd "$tmpfolder/ps1/build"
     cmake -DCMAKE_BUILD_TYPE=Release -GNinja "$tmpfolder/ps1/"
     ninja 
+
+    echo "Copying PS1 emulator files to emulator folder..."
     mv "$tmpfolder/ps1/build/bin" "$emulators/ps1"
+
+    echo "Creating PS1 memcards folder soft link..."
     ln -s "/rpi/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
     chown crossgame:crossgame "/rpi/memcards/ps1"
+else
+    echo "PS1 emulator is already installed!"
 fi
 
 #Compiling ps2 emulator
 if [[ ! -d "$emulators/ps2" ]]; then
+    echo "Downloading PS2 emulator code..."
     git clone --recurse-submodules "https://github.com/jpd002/Play-.git" "$tmpfolder/ps2"
+    
+    echo "Compiling PS2 emulator..."
     mkdir "$tmpfolder/ps2/build/"
     cd "$tmpfolder/ps2/build"
     sed -i "s/ OR TARGET_PLATFORM_UNIX_ARM OR TARGET_PLATFORM_UNIX_AARCH64//" "$tmpfolder/ps2/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt"
     cmake -G Ninja -DCMAKE_PREFIX_PATH=/opt/qt56/ "$tmpfolder/ps2/"
     cmake --build "$tmpfolder/ps2/build" --config Release
+
+    echo "Copying PS2 emulator files to emulator folder..."
     mv "/$tmpfolder/ps2/build/Source/ui_qt" "$emulators/ps2"
+else
+    echo "PS2 emulator is already installed!"
 fi
 
 # Compiling psp emulator
 if [[ ! -d "$emulators/psp" ]]; then
+    echo "Downloading PSP emulator code..."
     git clone --recurse-submodules "https://github.com/hrydgard/ppsspp.git" "$tmpfolder/psp"
+
+    echo "Compiling PS1 emulator..."
     mkdir "$tmpfolder/psp/build/"
     cd "$tmpfolder/psp/build/"
     cmake ..
     cmake -j 4 ..
     make install
+
+    echo "Copying PSP emulator files to emulator folder..."
     mkdir "$emulators/psp"
     cp "$tmpfolder/psp/build/PPSSPPSDL" "$emulators/psp/"
+
+    echo "Creating PSP memcards folder soft link..."
     ln -s "/rpi/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
     chown crossgame:crossgame "/rpi/memcards/psp"
+else
+    echo "PSP emulator is already installed!"
 fi

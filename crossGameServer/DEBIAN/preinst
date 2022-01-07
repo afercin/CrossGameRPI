@@ -1,17 +1,18 @@
 #!/bin/bash
 
-if [[ -f "/home/crossgame/.bashrc" ]]; then
-    cp "/home/crossgame/.bashrc" "/home/crossgame/.bashrc.back"
-fi
+dirs=("/root/.ssh" "/etc/netplan" "/etc/samba" "/etc/ssh")
+files=("/home/crossgame/.bashrc" "/etc/ssh/sshd_conf" "/etc/samba/smb.conf")
 
-if [[ -f "/etc/ssh/sshd_conf" ]]; then
-    cp "/etc/ssh/sshd_config" "/etc/ssh/sshd_config.back"
-fi
+for dir in ${dirs[@]}; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Creating '${dir}'..."
+        mkdir "$dir"
+    fi
+done
 
-if [[ -f "/etc/samba/smb.conf" ]]; then
-    cp "/etc/samba/smb.conf" "/etc/samba/smb.conf.back"
-fi
-
-if [[ ! -d "/rpi" ]]; then
-    mkdir "/rpi"
-fi
+for file in ${files[@]}; do
+    if [[ -f "${file}" ]]; then
+        echo "Creating '${file}' backup..."
+        cp "${file}" "${file}_backup"
+    fi
+done

@@ -1,3 +1,9 @@
 #!/bin/bash
+dirs=("/usr/share/server/emulators")
 
-[[ ! -d "/usr/share/server/emulators" ]] && mkdir "/usr/share/server/emulators"
+for dir in ${dirs[@]}; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Creating '${dir}'..."
+        mkdir "$dir"
+    fi
+done
