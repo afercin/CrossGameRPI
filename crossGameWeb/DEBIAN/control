@@ -1,5 +1,5 @@
-Package: CrossGameServer
-Version: 0.1.2
+Package: CrossGameWeb
+Version: 0.1.17
 Architecture: all
 Depends: crossgameserver, docker-ce, docker-ce-cli, containerd.io
 Maintainer: Internal Pointers <info@internalpointers.com>

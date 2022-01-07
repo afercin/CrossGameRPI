@@ -1,5 +1,5 @@
-Package: CrossGameServer
-Version: 0.1.2
+Package: CrossGameEmulators
+Version: 0.1.17
 Architecture: all
 Depends: crossgameserver, libsdl2-dev, libxrandr-dev, pkg-config, qtbase5-dev, qtbase5-private-dev,
  qtbase5-dev-tools, qttools5-dev, libevdev-dev, libwayland-dev, libwayland-egl-backend-dev,

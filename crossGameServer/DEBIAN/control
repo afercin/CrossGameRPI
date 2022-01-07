@@ -1,5 +1,5 @@
 Package: CrossGameServer
-Version: 0.1.2
+Version: 0.1.17
 Architecture: all
 Depends: xserver-xorg-core, xinit, samba, curl, autoconf, autoconf-archive, autogen, automake, cmake, libelf-dev, 
  libjson-c-dev, libjudy-dev, liblz4-dev, libmnl-dev, libssl-dev, libtool, libuv1-dev, pkg-config, uuid-dev, zlib1g-dev, 

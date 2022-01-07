@@ -1,5 +1,5 @@
 Package: CrossGameApp
-Version: 0.1.2
+Version: 0.1.17
 Architecture: all
 Depends: crossgameserver, python3-tk, python3-pil.imagetk, python3-pip, vlc, libvlc-dev
 Maintainer: Internal Pointers <info@internalpointers.com>
