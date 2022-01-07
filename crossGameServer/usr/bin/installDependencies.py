@@ -4,7 +4,7 @@ import subprocess
 
 
 class installDependencies:
-    DEPENDENCIES = ("imutils", "opencv-python", "python-vlc",
+    DEPENDENCIES = ("imutils", "opencv-python", "python-vlc", "screeninfo",
                     "ds4drv", "screeninfo", "pygame", "rpi.gpio", "pynput")
 
     def __init__(self):
