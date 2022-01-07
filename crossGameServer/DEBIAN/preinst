@@ -11,3 +11,7 @@ fi
 if [[ -f "/etc/samba/smb.conf" ]]; then
     cp "/etc/samba/smb.conf" "/etc/samba/smb.conf.back"
 fi
+
+if [[ ! -d "/rpi" ]]; then
+    mkdir "/rpi"
+fi
