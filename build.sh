@@ -22,7 +22,10 @@ echo
 echo "## Creating crossgameapp package..."
 dpkg-deb --build --root-owner-group ./crossGameApp
 echo
-echo "## Creating crossgameapp package..."
+echo "## Creating crossgameemulators package..."
+dpkg-deb --build --root-owner-group ./crossGameEmulators
+echo
+echo "## Creating crossgameserver package..."
 dpkg-deb --build --root-owner-group ./crossGameServer
 echo
 echo "## Done"
