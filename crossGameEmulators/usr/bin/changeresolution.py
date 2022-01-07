@@ -8,7 +8,7 @@ from screeninfo import get_monitors
 
 def main(argv):
     rflag = False
-    aflag = False
+    cflag = False
     nflag = False
     try:
         opts, args = getopt.getopt(argv, "hncr:", ["ifile=", "ofile="])
