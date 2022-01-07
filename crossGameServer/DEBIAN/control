@@ -1,7 +1,8 @@
 Package: CrossGameServer
 Version: 0.1.2
 Architecture: all
-Depends: xserver-xorg-core, xinit, samba, curl
+Depends: xserver-xorg-core, xinit, samba, curl, autoconf, autoconf-archive, autogen, automake, cmake, libelf-dev, 
+ libjson-c-dev, libjudy-dev, liblz4-dev, libmnl-dev, libssl-dev, libtool, libuv1-dev, pkg-config, uuid-dev, zlib1g-dev
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: A program that greets you.
  You can add a longer description here. Mind the space at the beginning of this paragraph.
