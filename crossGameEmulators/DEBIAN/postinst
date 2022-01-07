@@ -9,38 +9,38 @@ emulators="/usr/share/server/emulators"
 tmpfolder="/tmp/emulators"
 
 #Compiling psx emulator
-if [[ ! -d "$emulators/duckstation" ]]; then
-    git clone "https://github.com/stenzek/duckstation.git" -b dev "$tmpfolder/duckstation"
-    mkdir "$tmpfolder/duckstation/build/"
-    cd "$tmpfolder/duckstation/build"
-    cmake -DCMAKE_BUILD_TYPE=Release -GNinja "$tmpfolder/duckstation/"
+if [[ ! -d "$emulators/ps1" ]]; then
+    git clone "https://github.com/stenzek/duckstation.git" -b dev "$tmpfolder/ps1"
+    mkdir "$tmpfolder/ps1/build/"
+    cd "$tmpfolder/ps1/build"
+    cmake -DCMAKE_BUILD_TYPE=Release -GNinja "$tmpfolder/ps1/"
     ninja 
-    mv "$tmpfolder/duckstation/build/bin" "$emulators/duckstation"
+    mv "$tmpfolder/ps1/build/bin" "$emulators/ps1"
     ln -s "/rpi/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
     chown crossgame:crossgame "/rpi/memcards/ps1"
 fi
 
 #Compiling ps2 emulator
-if [[ ! -d "$emulators/play-" ]]; then
-    git clone --recurse-submodules "https://github.com/jpd002/Play-.git" "$tmpfolder/play-"
-    mkdir "$tmpfolder/play-/build/"
-    cd "$tmpfolder/play-/build"
-    sed -i "s/ OR TARGET_PLATFORM_UNIX_ARM OR TARGET_PLATFORM_UNIX_AARCH64//" "$tmpfolder/play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt"
-    cmake -G Ninja -DCMAKE_PREFIX_PATH=/opt/qt56/ "$tmpfolder/play-/"
-    cmake --build "$tmpfolder/play-/build" --config Release
-    mv "/$tmpfolder/play-/build/Source/ui_qt" "$emulators/play-"
+if [[ ! -d "$emulators/ps2" ]]; then
+    git clone --recurse-submodules "https://github.com/jpd002/Play-.git" "$tmpfolder/ps2"
+    mkdir "$tmpfolder/ps2/build/"
+    cd "$tmpfolder/ps2/build"
+    sed -i "s/ OR TARGET_PLATFORM_UNIX_ARM OR TARGET_PLATFORM_UNIX_AARCH64//" "$tmpfolder/ps2/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt"
+    cmake -G Ninja -DCMAKE_PREFIX_PATH=/opt/qt56/ "$tmpfolder/ps2/"
+    cmake --build "$tmpfolder/ps2/build" --config Release
+    mv "/$tmpfolder/ps2/build/Source/ui_qt" "$emulators/ps2"
 fi
 
 # Compiling psp emulator
-if [[ ! -d "$emulators/ppsspp" ]]; then
-    git clone --recurse-submodules "https://github.com/hrydgard/ppsspp.git" "$tmpfolder/ppsspp"
-    mkdir "$tmpfolder/ppsspp/build/"
-    cd "$tmpfolder/ppsspp/build/"
+if [[ ! -d "$emulators/psp" ]]; then
+    git clone --recurse-submodules "https://github.com/hrydgard/ppsspp.git" "$tmpfolder/psp"
+    mkdir "$tmpfolder/psp/build/"
+    cd "$tmpfolder/psp/build/"
     cmake ..
     cmake -j 4 ..
     make install
-    mkdir "$emulators/ppsspp"
-    cp "$tmpfolder/ppsspp/build/PPSSPPSDL" "$emulators/ppsspp/"
+    mkdir "$emulators/psp"
+    cp "$tmpfolder/psp/build/PPSSPPSDL" "$emulators/psp/"
     ln -s "/rpi/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
     chown crossgame:crossgame "/rpi/memcards/psp"
 fi
