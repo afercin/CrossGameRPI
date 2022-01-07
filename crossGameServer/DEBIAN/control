@@ -1,7 +1,7 @@
 Package: CrossGameServer
 Version: 0.1.2
 Architecture: all
-Depends: xserver-xorg-core, xinit, samba, curl, ca-certificates, gnupg, lsb-release, docker-ce, docker-ce-cli, containerd.io
+Depends: xserver-xorg-core, xinit, samba, curl
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: A program that greets you.
  You can add a longer description here. Mind the space at the beginning of this paragraph.
