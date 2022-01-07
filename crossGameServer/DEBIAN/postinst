@@ -48,11 +48,18 @@ sudo service smbd restart
 
 #Preparar repositorio para instalar docker
 echo "Adding docker repository..."
-curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | sudo gpg --dearmor -o "/usr/share/keyrings/docker-archive-keyring.gpg"
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee "/etc/apt/sources.list.d/docker.list" > /dev/null
-sudo apt-get update
+
+if [[ ! -f "/usr/share/keyrings/docker-archive-keyring.gpg" ]]; then
+    rm "/usr/share/keyrings/docker-archive-keyring.gpg"
+    curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | sudo gpg --dearmor --always-trust -o "/usr/share/keyrings/docker-archive-keyring.gpg" 
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | sudo tee "/etc/apt/sources.list.d/docker.list" > /dev/null
+    sudo apt-get update
+else
+    echo "Docker repository is already added."
+fi
+
 
 #Instalar docker-compose
 echo "Instaling docker compose..."

@@ -1,1 +1,2 @@
 #!/bin/bash
+docker-compose -f "/usr/share/server/docker/docker-compose.yml" up -d 2>&1
