@@ -11,7 +11,7 @@ done
 
 sudo chmod 777 "/etc/productConf"
 sudo chmod 777 "/var/log/product"
-chown crossgame:crossgame "/rpi"
+chown crossgame:adrix "/rpi"
 
 #Añadir privilegios de ejecución para los scripts
 scripts=("restartx" "swapmode" "automount" "redirectaudio" "restorepoint")

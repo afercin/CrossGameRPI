@@ -24,7 +24,6 @@ if [[ ! -d "$emulators/ps1" ]]; then
 
     echo "Creating PS1 memcards folder soft link..."
     ln -s "/rpi/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
-    chown crossgame:crossgame "/rpi/memcards/ps1"
 else
     echo "PS1 emulator is already installed!"
 fi
@@ -65,7 +64,9 @@ if [[ ! -d "$emulators/psp" ]]; then
 
     echo "Creating PSP memcards folder soft link..."
     ln -s "/rpi/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
-    chown crossgame:crossgame "/rpi/memcards/psp"
 else
     echo "PSP emulator is already installed!"
 fi
+
+chown -R crossgame:adrix "/home/crossgame/.local/share/duckstation"
+chown -R crossgame:adrix "/home/crossgame/.config/ppsspp"
