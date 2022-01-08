@@ -5,7 +5,7 @@ import subprocess
 
 class installDependencies:
     DEPENDENCIES = ("imutils", "opencv-python", "python-vlc", "screeninfo",
-                    "ds4drv", "screeninfo", "pygame", "rpi.gpio", "pynput")
+                    "ds4drv", "screeninfo", "pygame", "pynput")
 
     def __init__(self):
         if os.path.isfile("/etc/productConf/product.version"):
