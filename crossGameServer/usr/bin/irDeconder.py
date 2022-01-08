@@ -7,6 +7,63 @@ from event import *
 
 class irDecoder(Observer):
 
+    BUTTONS = {
+        "0x3a10c0807": "TVPowerReleased",
+        "0x3a10c2c03": "TVSourceReleased",
+        "0x3a10cb807": "TVVolumeUpReleased",
+        "0x3a10c3807": "TVVolumeDownReleased",
+        "0x3a10cd807": "TVMuteReleased",
+        
+        "0x320df10ef": "TVPower",
+        "0x3a10c700f": "TIVO",
+        "0x3a10cd10e": "Power",
+        "0x3a10c2807": "Up",
+        "0x3a10c6807": "Down",
+        "0x3a10ce807": "Left",
+        "0x3a10ca807": "Right",
+        "0x3a10c9807": "Ok",            
+        "0x320dfd02f": "TVSource",
+        "0x3a10c510e": "Language",
+        "0x3a10c220d": "Zoom",
+        "0x3a10c6c03": "Guide",
+        "0x3a10cc807": "Info",
+        "0x3a10c8807": "ShowTV",            
+        
+        "0x320df40bf": "TVVolumeUp",
+        "0x320dfc03f": "TVVolumeDown",
+        "0x320df906f": "TVMute",
+        "0x3a10c7807": "ProgUp",
+        "0x3a10cf807": "ProgDown",
+        "0x3a10c1807": "Dislike",
+        "0x3a10c040b": "Rec",
+        "0x3a10c5807": "Like",
+        
+        "0x3a10c840b": "Play",
+        "0x3a10cc40b": "Pause",
+        "0x3a10c440b": "Prev",
+        "0x3a10c240b": "Next",
+        "0x3a10c640b": "Back",
+        "0x3a10ca40b": "Slow",
+        "0x3a10ce40b": "GoOn",
+        "0x3a10cba05": "Videoclub",
+        
+        "0x3a10c0609": "Red",
+        "0x3a10c8609": "Green",
+        "0x3a10c4609": "Yellow",
+        "0x3a10cc609": "Blue",
+        "0x3a10c140b": "1",
+        "0x3a10c940b": "2",
+        "0x3a10c540b": "3",
+        "0x3a10cd40b": "4",
+        "0x3a10c340b": "5",
+        "0x3a10cb40b": "6",
+        "0x3a10c740b": "7",
+        "0x3a10cf40b": "8",
+        "0x3a10c0c03": "9",
+        "0x3a10c4c03": "C",
+        "0x3a10c8c03": "0",
+        "0x3a10ccc03": "Enter"
+    }
     def __init__(self, pin, verbose=False):
         Observer.__init__(self)
 
@@ -44,33 +101,14 @@ class irDecoder(Observer):
         self.observe("OnDataReceived", eventHandler)
 
     def checkInData(self):
-        BUTTONS = {
-            "0x300ffa25d": "1",
-            "0x300ff629d": "2",
-            "0x300ffe21d": "3",
-            "0x300ff22dd": "4",
-            "0x300ff02fd": "5",
-            "0x300ffc23d": "6",
-            "0x300ffe01f": "7",
-            "0x300ffa857": "8",
-            "0x300ff906f": "9",
-            "0x300ff9867": "0",
-            "0x300ff6897": "*",
-            "0x300ffb04f": "#",
-            "0x300ff10ef": "Left",
-            "0x300ff18e7": "Up",
-            "0x300ff4ab5": "Down",
-            "0x300ff5aa5": "Right",
-            "0x300ff38c7": "Enter"
-        }
         while not self.end:
             inData = self.getInData()
-            if inData not in ("0x1", "0x3", "0x5"):
+            if inData not in ("0x3"):
                 if self.dataReceived:
-                    if inData in BUTTONS.keys():
-                        Event("OnDataReceived", BUTTONS[inData])
+                    if inData in self.BUTTONS.keys():
+                        Event("OnDataReceived", self.BUTTONS[inData])
                     else:
-                        self.log.error("Unknow value \"{}\"!".format(inData))
+                        self.log.error("Unknow value \"{}\": \"\",!".format(inData))
 
     def getInData(self):
         def convertHex(binaryValue):
