@@ -4,7 +4,7 @@ import subprocess
 
 
 class installDependencies:
-    DEPENDENCIES = ("imutils", "opencv-python", "python-vlc", "screeninfo",
+    DEPENDENCIES = ("imutils", "opencv-python", "python-vlc",
                     "ds4drv", "screeninfo", "pygame", "pynput")
 
     def __init__(self):
@@ -29,6 +29,7 @@ class installDependencies:
             os.system("pip install --upgrade pip > /dev/null 2>&1")
 
             for d in self.DEPENDENCIES:
+                self.log.info("Installing " + d)
                 os.system("pip install -- user {} > /dev/null 2>&1".format(d))
 
             with open("/etc/productConf/product.version", "w") as f:

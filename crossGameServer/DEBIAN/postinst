@@ -62,11 +62,15 @@ fi
 
 
 #Instalar docker-compose
-echo "Instaling docker compose..."
+echo "Installing docker compose..."
 version="2.2.2"
 sudo curl -L "https://github.com/docker/compose/releases/download/v${version}/docker-compose-linux-aarch64" -o "/usr/local/bin/docker-compose"
 sudo chmod +x "/usr/local/bin/docker-compose"
 
 #Installar netdata
-echo "Instaling netdata..."
+echo "Installing netdata..."
 bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
+
+#Instalar librería de python
+echo "Installing screeninfo"
+pip install screeninfo 
