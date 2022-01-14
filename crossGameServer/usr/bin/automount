@@ -3,28 +3,34 @@
 SCRIPTNAME="automount"
 
 ## Call to libgoran
-. ./libgoran
+. /bin/libgoran
 
 ## Code
 vflag="true"
-mounted="false"
+SSD="null"
+declare -i nUSB=0
 {
     while true; do
-        if ! ls "/rpi/roms" > /dev/null 2>&1; then
-            msgWarn "Folder /rpi/roms does not exist!"
-            if lsusb | grep SATA -q; then
-                msgInfo "Found sda1 partition!"
-                if mount /dev/sda1 /rpi > /dev/null 2>&1; then
-                    msgOk "Partition sda1 mounted into /rpi!"
-                    mounted="true"
+        disks=$(lshw -C disk)
+        if [[ $(echo "$disks" | wc -l) != "0" ]]; then
+
+            if ! ls "/rpi/roms" > /dev/null 2>&1; then
+                msgWarn "Folder /rpi/roms does not exist!"
+                if echo "$disks" | grep "serial: 0123456789ABCDEF" -q; then
+                    msgInfo "Found sda1 partition!"
+                    SSD=$(echo "$disks" | grep -B 2 "serial: 0123456789ABCDEF" | head -1 | cut -d ":" -f2 | cut -d " " -f2)
+                    if mount "${SSD}1" "/rpi" > /dev/null 2>&1; then
+                        msgOk "SSD partition mounted into /rpi!"
+                        ((nUSB++))
+                    else
+                        msgError "Cannot mount SSD partition"
+                    fi
                 else
-                    msgError "Cannot mount sda1 partition"
+                    msgWarn "There is no SSD connected!"
                 fi
-            else
-                msgWarn "There is no SATA connected!"
             fi
+
         fi
-        [[ $mounted == "false" ]] && msgInfo "Waiting 5 seconds..."
         sleep 5
     done
 }
