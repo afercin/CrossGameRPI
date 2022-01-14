@@ -9,7 +9,7 @@ name=""
 sink=""
 
 ## Call to libgoran
-. ./libgoran
+. /bin/libgoran
 
 ## Functions
 setSink()
