@@ -1,2 +1,6 @@
 #!/bin/bash
-docker-compose -f "/usr/share/server/docker/docker-compose.yml" up -d 2>&1
+
+dockerFolder= "/usr/share/server/docker"
+
+git clone "https://github.com/afercin/CrossGameWP.git" "${dockerFolder}/web"
+docker-compose -f "${dockerFolder}/docker-compose.yml" up -d 2>&1
