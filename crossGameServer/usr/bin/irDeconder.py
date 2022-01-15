@@ -13,7 +13,7 @@ class irDecoder(Observer):
         "0x3a10cb807": "TVVolumeUpReleased",
         "0x3a10c3807": "TVVolumeDownReleased",
         "0x3a10cd807": "TVMuteReleased",
-        
+
         "0x320df10ef": "TVPower",
         "0x3a10c700f": "TIVO",
         "0x3a10cd10e": "Power",
@@ -21,14 +21,14 @@ class irDecoder(Observer):
         "0x3a10c6807": "Down",
         "0x3a10ce807": "Left",
         "0x3a10ca807": "Right",
-        "0x3a10c9807": "Ok",            
+        "0x3a10c9807": "Ok",
         "0x320dfd02f": "TVSource",
         "0x3a10c510e": "Language",
         "0x3a10c220d": "Zoom",
         "0x3a10c6c03": "Guide",
         "0x3a10cc807": "Info",
-        "0x3a10c8807": "ShowTV",            
-        
+        "0x3a10c8807": "ShowTV",
+
         "0x320df40bf": "TVVolumeUp",
         "0x320dfc03f": "TVVolumeDown",
         "0x320df906f": "TVMute",
@@ -37,7 +37,7 @@ class irDecoder(Observer):
         "0x3a10c1807": "Dislike",
         "0x3a10c040b": "Rec",
         "0x3a10c5807": "Like",
-        
+
         "0x3a10c840b": "Play",
         "0x3a10cc40b": "Pause",
         "0x3a10c440b": "Prev",
@@ -46,7 +46,7 @@ class irDecoder(Observer):
         "0x3a10ca40b": "Slow",
         "0x3a10ce40b": "GoOn",
         "0x3a10cba05": "Videoclub",
-        
+
         "0x3a10c0609": "Red",
         "0x3a10c8609": "Green",
         "0x3a10c4609": "Yellow",
@@ -64,6 +64,9 @@ class irDecoder(Observer):
         "0x3a10c8c03": "0",
         "0x3a10ccc03": "Enter"
     }
+
+    TRASH = ["0x1", "0x2", "0x3", "0x4", "0x5"]
+
     def __init__(self, pin, verbose=False):
         Observer.__init__(self)
 
@@ -103,12 +106,13 @@ class irDecoder(Observer):
     def checkInData(self):
         while not self.end:
             inData = self.getInData()
-            if inData not in ("0x3"):
+            if inData not in self.TRASH:
                 if self.dataReceived:
                     if inData in self.BUTTONS.keys():
                         Event("OnDataReceived", self.BUTTONS[inData])
                     else:
-                        self.log.error("Unknow value \"{}\": \"\",!".format(inData))
+                        self.log.error(
+                            "Unknow value \"{}\"!".format(inData))
 
     def getInData(self):
         def convertHex(binaryValue):
