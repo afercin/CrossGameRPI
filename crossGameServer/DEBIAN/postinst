@@ -30,11 +30,16 @@ systemctl set-default multi-user
 #Deshabilitar apagado automático
 #systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
-#Habilitar servicio de automontage
-echo "Setting automount service..."
+#Habilitar servicios
+echo "Setting up automount service..."
 systemctl daemon-reload
 systemctl enable automount.service
 systemctl start automount.service
+
+echo "Setting up rc-local service..."
+chmod u+x "/etc/rc.local"
+systemctl enable rc-local
+systemctl start rc-local
 
 #Establecer zona horaria
 echo "Setting Europe/Madrid timezone..."
