@@ -116,9 +116,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#while [[ ! -f "/tmp/crossgame.ready" ]]; do
-#    sleep 0.5
-#done
+while [[ ! -f "/tmp/crossgame.ready" ]]; do
+    sleep 0.5
+done
 
 ######## Check updates ########
 

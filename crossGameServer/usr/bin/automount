@@ -7,30 +7,36 @@ SCRIPTNAME="automount"
 
 ## Code
 vflag="true"
-SSD="null"
+SSD_UUID="842750cc-1a91-4d41-bc76-5ac415f92e4c"
 declare -i nUSB=0
-{
-    while true; do
-        disks=$(lshw -C disk)
-        if [[ $(echo "$disks" | wc -l) != "0" ]]; then
+declare -i nDisks
 
-            if ! ls "/rpi/roms" > /dev/null 2>&1; then
-                msgWarn "Folder /rpi/roms does not exist!"
-                if echo "$disks" | grep "serial: 0123456789ABCDEF" -q; then
-                    msgInfo "Found sda1 partition!"
-                    SSD=$(echo "$disks" | grep -B 2 "serial: 0123456789ABCDEF" | head -1 | cut -d ":" -f2 | cut -d " " -f2)
-                    if mount "${SSD}1" "/rpi" > /dev/null 2>&1; then
+getPartitionName()
+{
+    readlink -f "/dev/disk/by-uuid/$1"
+}
+
+while true; do
+    disks=$(ls /dev/disk/by-uuid)
+    nDisks=$(echo "$disks" | wc -w)
+    if [[ $nDisks -gt 2 ]]; then
+        for disk in ${disks[@]}; do
+
+            if [[ $disk != "3E50-902A" ]] && [[ $disk != "378383c9-0612-4c82-9c07-8c34d15253ba" ]]; then
+
+                if [[ $disk == $SSD_UUID ]] && ! ls "/rpi/roms" > /dev/null 2>&1; then
+                    msgWarn "Folder /rpi/roms is not accesible!"
+                    touch "/tmp/crossgame.ready"
+                    if mount $(getPartitionName $disk) "/rpi" > /dev/null; then
                         msgOk "SSD partition mounted into /rpi!"
-                        ((nUSB++))
                     else
                         msgError "Cannot mount SSD partition"
                     fi
-                else
-                    msgWarn "There is no SSD connected!"
                 fi
+
             fi
 
-        fi
-        sleep 5
-    done
-}
+        done
+    fi
+    sleep 5
+done
