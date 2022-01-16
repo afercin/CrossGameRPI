@@ -3,9 +3,8 @@ xset s off
 xset -dpms
 xset s noblank
 
-python3 /usr/bin/prueba
-python3 /usr/bin/controllerHook.py &
 python3 /usr/bin/simulateKeys.py -s &
+python3 /usr/bin/keyboardTranslator.py &
 
 roms="/rpi/roms"
 game="$roms/$(cat $roms/current.game)"
@@ -15,7 +14,8 @@ emulators="/usr/share/server/emulators"
 #"$emulators/ps2/DobieStation" "$roms/ps2/Final Fantasy XII.iso" > /tmp/ps2.log 2>&1
 #"$emulators/psp/PPSSPPSDL" --fullscreen "$roms/psp/Crash of the Titans/Crash Of The Titans.iso"
 
-python3 /usr/bin/changeResolution.py -r 640x480 -c
+python3 /usr/bin/changeResolution.py -r 640x480 -c > /tmp/prueba 2>&1
+touch /tmp/key.lock
 "$emulators/ps1/duckstation-qt" -fullscreen "$game" > /var/log/product/duckstation.log 2>&1
 
 #fceux --nogui "$roms/nes/Tetris/Tetris (USA).nes" > /tmp/nes.log 2>&1

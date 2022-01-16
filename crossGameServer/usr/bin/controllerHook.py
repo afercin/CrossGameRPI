@@ -92,19 +92,13 @@ class controllerHook(Observer):
     def checkInputs(self):
         def sendKey(pressed, buttonNumber):
             if pressed:
+                self.button[buttonNumber] = True
                 if self.KeyDown and not self.pause:
                     Event("OnKeyDown", buttonNumber)
-                self.button[buttonNumber] = True
-                if self.button[controller.PS] and self.button[controller.SELECT]:
-                    self.log.info("Powering off")
-                    os.system("shutdown -f 0")
-                if self.button[controller.SELECT] and self.button[controller.START]:
-                    self.log.info("Restarting X")
-                    os.system("/usr/bin/restartx")
             else:
+                self.button[buttonNumber] = False
                 if self.KeyUp and not self.pause:
                     Event("OnKeyUp", buttonNumber)
-                self.button[buttonNumber] = False
             self.lastInput = datetime.now()
 
         def checkController():
