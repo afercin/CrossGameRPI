@@ -130,6 +130,6 @@ done
 [[ -f "/tmp/needreboot" ]] && reboot
 
 python3 /usr/bin/installDependencies.py
-while [[ -f "/tmp/debug" ]]; do
+while [[ ! -f "/tmp/debug" ]]; do
     startx
 done
