@@ -40,9 +40,6 @@ class installDependencies:
         else:
             self.log.info("No hay dependencias por instalar")
 
-        with open("/tmp/crossgame.ready", "w") as f:
-            f.write("ready")
-
     def dispose(self):
         self.log.dispose()
 
