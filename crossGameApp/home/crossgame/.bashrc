@@ -117,6 +117,7 @@ if ! shopt -oq posix; then
 fi
 
 while [[ ! -f "/tmp/crossgame.ready" ]]; do
+    echo "Waiting for ssd..."
     sleep 0.5
 done
 
@@ -129,6 +130,6 @@ done
 [[ -f "/tmp/needreboot" ]] && reboot
 
 python3 /usr/bin/installDependencies.py
-while true; do
+while [[ -f "/tmp/debug" ]]; do
     startx
 done
