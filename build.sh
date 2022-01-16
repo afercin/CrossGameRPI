@@ -19,16 +19,9 @@ echo
 echo "## Deleting old packages..."
 rm ./*.deb
 echo
-echo "## Creating crossgameapp package..."
-dpkg-deb --build --root-owner-group ./crossGameApp
-echo
-echo "## Creating crossgameemulators package..."
-dpkg-deb --build --root-owner-group ./crossGameEmulators
-echo
-echo "## Creating crossgameserver package..."
-dpkg-deb --build --root-owner-group ./crossGameServer
-echo
-echo "## Creating crossgameweb package..."
-dpkg-deb --build --root-owner-group ./crossGameWeb
-echo
+for package in $(find . -maxdepth 1 -type d -name "crossGame*" | cut -d "/" -f2); do
+    echo "## Creating $package package..."
+    dpkg-deb --build --root-owner-group "$package"
+    echo
+done
 echo "## Done"
