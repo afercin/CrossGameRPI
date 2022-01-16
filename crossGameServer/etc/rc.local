@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if chmod 777 /dev/gpiomem; then
+    echo "Added privileges to /dev/gpiomem"
+else
+    echo "Error adding privileges to /dev/gpiomem"
+    exit 1
+fi
+
+exit 0
