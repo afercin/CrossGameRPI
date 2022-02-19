@@ -33,7 +33,7 @@ class tkVideoCV(tkAnimation):
             self.reset()
 
             if autostart:
-                self.start()
+                self.play()
         else:
             raise IncompatibleFormat()
         
