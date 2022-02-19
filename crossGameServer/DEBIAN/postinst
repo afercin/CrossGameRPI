@@ -79,3 +79,6 @@ bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
 #Instalar librería de python
 echo "Installing screeninfo"
 pip install screeninfo 
+
+#Agregar repositorio de nodejs
+curl -sL https://deb.nodesource.com/setup_17.x | sudo -E bash -
