@@ -1,8 +1,12 @@
 import tkinter
+import threading
+import time
 from abc import ABC
+
 
 class EndOfAnimation(Exception):
     pass
+
 
 class tkAnimation(tkinter.Label, ABC):
     def __init__(self,
@@ -17,10 +21,11 @@ class tkAnimation(tkinter.Label, ABC):
         self.height = height
         self.repeat = repeat
         self.running = False
-        self.delay = delay
+        self.delay = delay / 1000
         self.ended = False
 
         self.configure(width=self.width, height=self.height)
+        self.animationThread = threading.Thread(target=self.beginAnimation)
 
     def play(self):
         if not self.running:
@@ -29,7 +34,7 @@ class tkAnimation(tkinter.Label, ABC):
             if self.ended:
                 self.reset()
                 self.ended = False
-            self.beginAnimation()
+            self.animationThread.start()
 
     def pause(self):
         if self.running:
@@ -39,7 +44,7 @@ class tkAnimation(tkinter.Label, ABC):
         if self.running:
             self.running = False
             self.reset()
-    
+
     def setSource(self, source, autostart):
         raise NotImplementedError()
 
@@ -48,18 +53,20 @@ class tkAnimation(tkinter.Label, ABC):
 
     def reset(self):
         raise NotImplementedError()
-    
+
     def beginAnimation(self):
-        try:
-            if self.running:
+        while self.running:
+            try:
                 nextFrame = self.getNextFrame()
                 self.configure(image=nextFrame)
                 self.currentFrame = nextFrame
-                self.after(self.delay, func=self.beginAnimation)
+                time.sleep(self.delay)
 
-        except EndOfAnimation:
-            self.running = False
-            self.ended = True
+            except EndOfAnimation:
+                self.running = False
+                self.ended = True
 
-        except Exception as e:
-            print(str(e))
+            except Exception as e:
+                print(str(e))
+                self.running = False
+                self.ended = True
