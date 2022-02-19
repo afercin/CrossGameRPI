@@ -1,7 +1,14 @@
+from concurrent.futures import thread
 import tkinter
 import sys
+import os
+import threading
+from PIL import Image, ImageTk as itk
+from apptk.tkVideo import tkVideo
+from apptk.tkGif import tkGif
+import pyautogui
 
-class tkButton(tkinter.Frame):
+class tkOption(tkinter.Frame):
     """ tkinter custom button with border, rounded corners and hover effect
         Arguments:  master= where to place button
                     bg_color= background color, None is standard,
@@ -28,7 +35,9 @@ class tkButton(tkinter.Frame):
                  command=None,
                  width=120,
                  height=40,
-                 corner_radius=10,
+                 maxwidth=120,
+                 maxheight=40,
+                 corner_radius=0,
                  text_font=None,
                  text_color="white",
                  text="CustomButton",
@@ -48,6 +57,9 @@ class tkButton(tkinter.Frame):
 
         self.width = width
         self.height = height
+
+        self.maxwidth = maxwidth
+        self.maxheight = maxheight
 
         if corner_radius*2 > self.height:
             self.corner_radius = self.height/2
@@ -75,19 +87,43 @@ class tkButton(tkinter.Frame):
         else:
             self.text_font = text_font
 
-        self.image = image
-
         self.function = command
         self.hover = hover
+        self.fullscreen = False
 
         self.configure(width=self.width, height=self.height)
 
         self.canvas = tkinter.Canvas(master=self,
                                      highlightthicknes=0,
                                      background=self.bg_color,
-                                     width=self.width,
-                                     height=self.height)
-        self.canvas.place(x=0, y=0)
+                                     width=self.maxwidth,
+                                     height=self.maxheight)
+        self.canvas.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+
+        self.image = image
+
+        if image != None:
+            extension = os.path.splitext(image)[1]
+            if extension in (".png", ".jpg"):
+                self.bgimage = Image.open(image).resize(
+                    [self.maxwidth, self.maxheight], Image.ANTIALIAS)
+                self.image = itk.PhotoImage(self.bgimage)
+
+            if extension == ".gif":
+                self.image = tkGif(master=self,
+                                   source=image,
+                                   width=self.maxwidth,
+                                   height=self.maxheight,
+                                   delay=33)
+
+            if extension == ".mp4":
+                self.image = tkVideo(master=self,
+                                     source=image,
+                                     width=self.maxwidth,
+                                     height=self.maxheight,
+                                     autostart=False,
+                                     mute=True,
+                                     repeat=True)
 
         if self.hover is True:
             self.canvas.bind("<Enter>", self.on_enter)
@@ -198,9 +234,12 @@ class tkButton(tkinter.Frame):
         # use the given image
         else:
             # create tkinter.Label with image on it
-            self.image_label = tkinter.Label(master=self,
-                                             image=self.image,
-                                             bg=self.fg_color)
+            if isinstance(self.image, itk.PhotoImage):
+                self.image_label = tkinter.Label(master=self,
+                                                 image=self.image,
+                                                 bg=self.fg_color)
+            else:
+                self.image_label = self.image
 
             self.image_label.place(relx=0.5,
                                    rely=0.5,
@@ -242,6 +281,8 @@ class tkButton(tkinter.Frame):
             self.text_label.configure(text=text)
 
     def on_enter(self, event=0):
+        if isinstance(self.image, tkVideo):
+            self.image.play()
         for part in self.canvas_fg_parts:
             self.canvas.itemconfig(part, fill=self.hover_color, width=0)
 
@@ -254,6 +295,8 @@ class tkButton(tkinter.Frame):
             self.image_label.configure(bg=self.hover_color)
 
     def on_leave(self, event=0):
+        if isinstance(self.image, tkVideo):
+            self.image.pause()
         for part in self.canvas_fg_parts:
             self.canvas.itemconfig(part, fill=self.fg_color, width=0)
 
@@ -269,3 +312,20 @@ class tkButton(tkinter.Frame):
         if self.function is not None:
             self.function()
             self.on_leave()
+
+    def fullScreen(self, x, y, anchor):
+        def autofocus():
+            pyautogui.moveTo(10, 10)
+            pyautogui.moveTo(x*self.maxwidth, y*self.maxheight + 30)
+                
+        if not self.fullscreen:
+            if isinstance(self.image, tkVideo):
+                self.image.play()
+            self.place(relx=0, rely=0, anchor=tkinter.NW)
+            self.configure(width=self.maxwidth, height=self.maxheight)
+            self.lift()
+        else:
+            self.place(relx=x, rely=y, anchor=anchor)
+            self.configure(width=self.width, height=self.height)
+            threading.Thread(target=autofocus).start()
+        self.fullscreen = not self.fullscreen
