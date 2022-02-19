@@ -1,16 +1,24 @@
 import tkinter
-from apptk.tkVideo import tkVideo
-from apptk.tkGif import tkGif
-from apptk.tkButtom import tkButton
+import os
+from apptk.tkOption import tkOption
 from apptk.tkGameScreen import tkGameScreen
-from controllerHook import *
+import pyautogui
+
+if "dev" in os.path.dirname(os.path.abspath(__file__)):
+    ROOTDIR = "/home/afercin/dev/CrossGameRPI/crossGameApp/"
+    CURSOR = "hand2"
+else:
+    ROOTDIR = "/"
+    CURSOR = "none"
+
 
 class tkWindow(tkinter.Tk):
     WIDTH = 800
     HEIGHT = 600
+
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
-        
+
         from screeninfo import get_monitors
         for m in get_monitors():
             if m.x == 0 and m.y == 0:
@@ -20,156 +28,89 @@ class tkWindow(tkinter.Tk):
         self.attributes("-fullscreen", True)
         self.geometry(str(self.WIDTH) + "x" + str(self.HEIGHT))
 
-        self.controller = controllerHook(15)
-        self.controller.onKeyUp(self.keyPressed)
-        self.controller.start() 
-
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.bind("<KeyPress>", self.keyPressed)
         self.bind("<Command-q>", self.on_closing)
-        self.bind("<Command-w>", self.on_closing)
 
-        self.mode = 1
-        self.canvas = tkGameScreen(self)
-        #self.cosa = tkVideo(master = self, width=self.WIDTH, height=self.HEIGHT, source="/home/afercin/Downloads/master.m3u8")
-        #self.cosa.pack()
+        self.position = 0
         self.initializeControls()
-        
+
     def keyPressed(self, key):
-        if self.mode == 1:
-            self.mode = 2
-            self.canvas2.place_forget()
-            self.canvas.setGame("God of War")
-        else:
-            self.mode = 1
-            self.canvas.hide()
-            self.canvas2.place(x=0, y=0)
-    
+        if key.keysym == "Up":
+            Popup(self)
+        if key.keysym == "Left":
+            self.position -= 1
+            if self.position < 0:
+                self.position = 2
+            pyautogui.moveTo(
+                self.positions[self.position] * self.WIDTH, self.startY * self.HEIGHT + 30)
+        if key.keysym == "Right":
+            self.position += 1
+            if self.position > 2:
+                self.position = 0
+            pyautogui.moveTo(
+                self.positions[self.position] * self.WIDTH, self.startY * self.HEIGHT + 30)
+        if key.keysym in ("Return", "KP_Enter"):
+            pyautogui.click()
+        print(key.keysym)
+
     def initializeControls(self):
-        self.canvas2 = tkinter.Canvas(self, width=self.WIDTH, height=self.HEIGHT, highlightthickness = 0)
-        self.canvas2.place(x=0, y=0)
-        def exampleButtons():
+        self.mainWindow = tkinter.Canvas(
+            self, width=self.WIDTH, height=self.HEIGHT, highlightthickness=0)
+        self.mainWindow.place(x=0, y=0)
 
-            # ========== slightly rounded corners =============
+        self.startY = 0.05
+        self.startX = 0.028125
+        margin = self.HEIGHT * self.startY
+        height = self.HEIGHT - margin * 2
+        width = (self.WIDTH - margin * 4) / 3
 
-            """button_1 = tkVideo(master=self, 
-                               width=1280, 
-                               height=720)
-            button_1.place(relx=0.33, rely=0.2, anchor=tkinter.CENTER)"""
+        self.positions = (self.startX, 0.5, 0.5 +
+                          (width / self.WIDTH) + self.startX)
 
-            button_2 = tkButton(master=self.canvas2,
-                                    bg_color=None,
-                                    fg_color="#922B21",
-                                    border_color="white",
-                                    hover_color="#CD6155",
-                                    text_font=None,
-                                    text="Test Button 2",
-                                    text_color="white",
-                                    corner_radius=10,
-                                    border_width=2,
-                                    width=150,
-                                    height=45,
-                                    hover=True,
-                                    cursor="hand2",)
-            button_2.place(relx=0.66, rely=0.2, anchor=tkinter.CENTER)
+        self.tv = tkOption(master=self.mainWindow,
+                           image="{}rpi/apptk/videos/God of War.mp4".format(
+                               ROOTDIR),
+                           width=width,
+                           height=height,
+                           maxwidth=self.WIDTH,
+                           maxheight=self.HEIGHT,
+                           cursor=CURSOR,
+                           command=lambda: self.tv.fullScreen(self.positions[0], self.startY, tkinter.NW))
+        self.tv.place(relx=self.positions[0],
+                      rely=self.startY,
+                      anchor=tkinter.NW)
 
-            # ========== fully rounded corners =============
+        self.games = tkOption(master=self.mainWindow,
+                              image="{}rpi/apptk/videos/God of War.mp4".format(
+                                  ROOTDIR),
+                              width=width,
+                              height=height,
+                              maxwidth=self.WIDTH,
+                              maxheight=self.HEIGHT,
+                              cursor=CURSOR,
+                              command=lambda: self.games.fullScreen(self.positions[1], self.startY, tkinter.N))
+        self.games.place(relx=self.positions[1],
+                         rely=self.startY,
+                         anchor=tkinter.N)
 
-            button_3 = tkButton(master=self.canvas2,
-                                                bg_color=None,
-                                                fg_color="#1E8449",
-                                                hover_color="#2ECC71",
-                                                text_font=None,
-                                                text="Test Button 3",
-                                                text_color="white",
-                                                corner_radius=20,
-                                                width=120,
-                                                height=40,
-                                                hover=True,
-                                                cursor="hand2")
-            button_3.place(relx=0.33, rely=0.4, anchor=tkinter.CENTER)
-
-            button_4 = tkButton(master=self.canvas2,
-                                                bg_color=None,
-                                                border_color="#BB8FCE",
-                                                fg_color="#6C3483",
-                                                hover_color="#A569BD",
-                                                text_font=None,
-                                                text="Test Button 4",
-                                                text_color="white",
-                                                corner_radius=20,
-                                                border_width=2,
-                                                width=150,
-                                                height=40,
-                                                hover=True,
-                                                cursor="hand2",
-                                                command=button_7.stop)
-            button_4.place(relx=0.66, rely=0.4, anchor=tkinter.CENTER)
-
-            # ========== no rounded corners =============
-
-            button_5 = tkButton(master=self.canvas2,
-                                                bg_color=None,
-                                                fg_color="#A93226",
-                                                hover_color="#CD6155",
-                                                text_font=None,
-                                                text="Test Button 5",
-                                                text_color="black",
-                                                corner_radius=0,
-                                                width=120,
-                                                height=40,
-                                                hover=True,
-                                                cursor="hand2",
-                                                command=button_7.reset)
-            button_5.place(relx=0.33, rely=0.6, anchor=tkinter.CENTER)
-
-            button_6 = tkButton(master=self.canvas2,
-                                                bg_color=None,
-                                                fg_color=self.cget("bg"),
-                                                border_color="#ABB2B9",
-                                                hover_color="#566573",
-                                                text_font=None,
-                                                text="Test Button 6",
-                                                text_color="#ABB2B9",
-                                                corner_radius=0,
-                                                border_width=2,
-                                                width=120,
-                                                height=40,
-                                                hover=True,
-                                                cursor="hand2",
-                                                command=button_7.play)
-            button_6.place(relx=0.66, rely=0.6, anchor=tkinter.CENTER)
-
-        
-        # ========== other shapes =============
-        try:
-            button_7 = tkGif(master=self.canvas2, source="/usr/share/apptk/images/ZYZy.gif")
-            button_7.place(relx=0.33, rely=0.8, anchor=tkinter.CENTER)
-
-            button_8 = tkButton(master=self.canvas2,
-                                                bg_color=None,
-                                                fg_color="#212F3D",
-                                                border_color="#117A65",
-                                                hover_color="#34495E",
-                                                text_font=None,
-                                                text="Button 8",
-                                                text_color="white",
-                                                corner_radius=12,
-                                                border_width=4,
-                                                width=100,
-                                                height=60,
-                                                hover=True,
-                                                cursor="hand2",
-                                                command=button_7.pause)
-            button_8.place(relx=0.66, rely=0.8, anchor=tkinter.CENTER)
-            
-            exampleButtons()
-            
-            self.running = False
-        except Exception as e:
-            print(str(e))
+        self.media = tkOption(master=self.mainWindow,
+                              image="{}rpi/apptk/videos/God of War.mp4".format(
+                                  ROOTDIR),
+                              width=width,
+                              height=height,
+                              maxwidth=self.WIDTH,
+                              maxheight=self.HEIGHT,
+                              cursor=CURSOR,
+                              command=lambda: self.media.fullScreen(self.positions[2], self.startY, tkinter.N))
+        self.media.place(relx=self.positions[2],
+                         rely=self.startY,
+                         anchor=tkinter.N)
+        pyautogui.moveTo(
+            self.positions[0] * self.WIDTH + 30, self.startY * self.HEIGHT + 30)
 
     def on_closing(self, event=0):
-        self.controller.dispose()
+        # self.controller.dispose()
         self.running = False
         self.destroy()
         exit()
@@ -177,6 +118,23 @@ class tkWindow(tkinter.Tk):
     def start(self):
         self.running = True
         self.mainloop()
+
+
+class Popup(tkinter.Toplevel):
+    def __init__(self, master):
+        tkinter.Toplevel.__init__(self, master)
+
+        lbl = tkinter.Label(self, text="this is the popup")
+        lbl.pack()
+
+        btn = tkinter.Button(self, text="OK", command=self.destroy)
+        btn.pack()
+
+        self.transient(master)  # set to be on top of the main window
+        self.grab_set()  # hijack all commands from the master (clicks on the main window are ignored)
+        # pause anything on the main window until this one closes (optional)
+        master.wait_window(self)
+
 
 if __name__ == "__main__":
     app = tkWindow()
