@@ -14,7 +14,7 @@ sudo chmod 777 "/var/log/product"
 chown crossgame:adrix "/rpi"
 
 #Añadir privilegios de ejecución para los scripts
-scripts=("restartx" "swapmode" "automount" "redirectaudio" "restorepoint")
+scripts=("restartx" "swapmode" "automount" "restorepoint")
 for script in ${scripts[@]}; do
     echo "Adding execution privileges to '$script'..."
     chmod 777 "/usr/bin/${script}"

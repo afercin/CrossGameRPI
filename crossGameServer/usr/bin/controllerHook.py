@@ -112,9 +112,6 @@ class controllerHook(Observer):
                         self.log.info(
                             "Controller \"{}\" added in slot {}!".format(name, i))
 
-                        if i == 0:
-                            os.system(
-                                "redirectaudio -n {}".format(name.replace(" ", "_")))
                 else:
                     joysticks = [pygame.joystick.Joystick(
                         i) for i in range(pygame.joystick.get_count())]
