@@ -3,6 +3,7 @@ xset s off
 xset -dpms
 xset s noblank
 
+python3 /usr/bin/cgAPI.py &
 python3 /usr/bin/simulateKeys.py -s &
 python3 /usr/bin/keyboardTranslator.py &
 
