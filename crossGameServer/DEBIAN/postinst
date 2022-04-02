@@ -74,7 +74,11 @@ sudo chmod +x "/usr/local/bin/docker-compose"
 
 #Installar netdata
 echo "Installing netdata..."
-bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
+if [[ ! -d "/var/lib/netdata" ]]; then
+    bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
+else
+    echo "Netdata is already installed"
+fi
 
 #Instalar librería de python
 echo "Installing screeninfo"
