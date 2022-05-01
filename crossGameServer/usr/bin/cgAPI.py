@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 from flask import Flask, request, jsonify
 import subprocess
+import configparser
 import os
 
-ROMSPATH = "/rpi/roms"
-VIDEOPATH = "/rpi/video"
-IMAGEPATH = "/rpi/apptk/images"
-APIPATH = "/api/v1"
+CONFFILE = "/etc/productConf/cg.conf"
+if "dev" in os.path.abspath(os.getcwd()):
+    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameServer" + CONFFILE
+
+config = configparser.ConfigParser()
+config.read(CONFFILE)
+
+ROMSPATH = config["PATH"]["roms"]
+VIDEOPATH = config["PATH"]["videos"]
+IMAGEPATH = config["PATH"]["images"]
+APIPATH = config["PATH"]["api"]
 
 app = Flask(__name__)
 
