@@ -14,7 +14,7 @@ sudo chmod 777 "/var/log/product"
 chown crossgame:adrix "/rpi"
 
 #Añadir privilegios de ejecución para los scripts
-scripts=("restartx" "swapmode" "automount" "restorepoint")
+scripts=("restartx" "swapmode" "automount" "restorepoint" "cgAPI.py")
 for script in ${scripts[@]}; do
     echo "Adding execution privileges to '$script'..."
     chmod 777 "/usr/bin/${script}"
@@ -40,6 +40,10 @@ echo "Setting up rc-local service..."
 chmod u+x "/etc/rc.local"
 systemctl enable rc-local
 systemctl start rc-local
+
+echo "Setting up api REST service..."
+systemctl enable apiRest.service
+systemctl start apiRest.service
 
 #Establecer zona horaria
 echo "Setting Europe/Madrid timezone..."
