@@ -26,9 +26,10 @@ while true; do
 
                 if [[ $disk == $SSD_UUID ]] && ! ls "/rpi/roms" > /dev/null 2>&1; then
                     msgWarn "Folder /rpi/roms is not accesible!"
-                    touch "/tmp/crossgame.ready"
                     if mount $(getPartitionName $disk) "/rpi" > /dev/null; then
                         msgOk "SSD partition mounted into /rpi!"
+                        ls /rpi > /dev/null 2>&1
+                        touch "/tmp/crossgame.ready"
                     else
                         msgError "Cannot mount SSD partition"
                     fi
