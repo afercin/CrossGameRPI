@@ -96,5 +96,20 @@ def get_images_from_game():
 
     return jsonify(images)
 
+@app.route(f"{APIPATH}/get-miniature", methods=["GET"]) 
+def get_game_miniature():
+    game = request.args["game"]
+    image = None
+
+    if "Disco" in game:
+        game = game.split("Disco")[0].strip()
+
+    if os.path.isfile(f"{IMAGEPATH}/{game}_miniature.jpg"):
+        with open(f"{IMAGEPATH}/{game}_miniature.jpg", "rb") as image:
+            f = image.read()
+            return bytearray(f)
+
+    return jsonify({'message': 'fail'})
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
