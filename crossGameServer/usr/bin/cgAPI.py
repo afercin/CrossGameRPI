@@ -16,6 +16,8 @@ VIDEOPATH = config["PATH"]["videos"]
 IMAGEPATH = config["PATH"]["images"]
 APIPATH = config["PATH"]["api"]
 
+EMULATORPROCESS = None
+
 app = Flask(__name__)
 
 def getFilesByPath(startPath):
@@ -25,28 +27,30 @@ def getFilesByPath(startPath):
             files.append("{}/{}".format(dirpath, file))
     return files
 
-@app.route(f"{APIPATH}/games", methods=["GET"])
-def get_games():
-    def listFolder(folder):
-        data = []
-        for entry in os.listdir(folder):
+def getGamesByEmulator(emulator):
+    folder = f"{ROMSPATH}/{emulator}"
+    games = []
+    for entry in os.listdir(folder):
 
-            ls = os.listdir(f"{folder}/{entry}")
-            print(ls)
-            print(f"{folder}/{entry}/{ls[0]}")
+        ls = os.listdir(f"{folder}/{entry}")
 
-            if os.path.isfile(f"{folder}/{entry}/{ls[0]}"):
-                data.append({"name": entry, "files": getFilesByPath(f"{folder}/{entry}")})
-            else:
-                for disk in ls:
-                    data.append({"name": f"{entry} {disk}", "files": getFilesByPath(f"{folder}/{entry}/{disk}")})
-        return data
+        if os.path.isfile(f"{folder}/{entry}/{ls[0]}"):
+            games.append({"name": entry, "files": getFilesByPath(f"{folder}/{entry}")})
+        else:
+            for disk in ls:
+                games.append({"name": f"{entry} {disk}", "files": getFilesByPath(f"{folder}/{entry}/{disk}")})
+    return games
 
-    gameList = []
+def getAllGames():
+    allGames = []
     for emulator in os.listdir(ROMSPATH):
         if not os.path.isfile(ROMSPATH + "/" + emulator):
-            gameList.append({"name": emulator, "games": listFolder(f"{ROMSPATH}/{emulator}")})
-    return jsonify(gameList)
+            allGames.append({"name": emulator, "games": getGamesByEmulator(emulator)})
+    return allGames
+
+@app.route(f"{APIPATH}/games", methods=["GET"])
+def get_games():
+    return jsonify(getAllGames())
 
 
 @app.route(f"{APIPATH}/videos", methods=["GET"])
@@ -110,6 +114,46 @@ def get_game_miniature():
             return bytearray(f)
 
     return jsonify({'message': 'fail'})
+
+@app.route(f"{APIPATH}/launch-game", methods=["GET"]) 
+def launch_game():
+    name = request.args["name"]
+    emulator = request.args["emulator"]
+
+    for game in getGamesByEmulator(emulator):
+        if name in game["name"]:
+
+            emulatorsPath = config["PATH"]["emulators"]
+            emulatorName = config[emulator.upper()]["emulatorName"]
+            preferredExtension = config[emulator.upper()]["preferredExtension"]
+            resolution = config[emulator.upper()]["resolution"]
+            args = config[emulator.upper()]["args"]
+
+            if not preferredExtension:
+                isoFile = game["isos"][0];
+            else:
+                isoFile = next(iso for iso in game["files"] if preferredExtension in iso)
+
+            if resolution:
+                subprocess.Popen(["/usr/bin/blackWindow.py"])
+                os.system(f"python3 /usr/bin/changeResolution.py -r {resolution} -c > /tmp/change.log")
+
+            EMULATORPROCESS = subprocess.call([f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") +[isoFile])
+
+            if resolution:
+                os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080 >> /tmp/change.log")
+            
+            return jsonify({'result': "Ok"})
+
+    return jsonify({'result': "Not ok"})
+
+@app.route(f"{APIPATH}/close-emulator", methods=["GET"]) 
+def close_emulator():
+    if EMULATORPROCESS != None:
+        EMULATORPROCESS.stop()
+        return jsonify({'result': "Ok"})
+
+    return jsonify({'result': "Not ok"})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

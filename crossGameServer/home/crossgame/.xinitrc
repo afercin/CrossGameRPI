@@ -3,9 +3,11 @@ xset s off
 xset -dpms
 xset s noblank
 
-python3 /usr/bin/cgAPI.py &
-python3 /usr/bin/simulateKeys.py -s &
 python3 /usr/bin/keyboardTranslator.py &
+
+python3 /usr/bin/cgAPI.py > /tmp/api.log 2>&1 &
+
+chromium-browser -start-fullscreen --window-position=0,0 --window-size=1920,1080  http://localhost:4200/
 
 roms="/rpi/roms"
 game="$roms/$(cat $roms/current.game)"
