@@ -33,22 +33,23 @@ def main(argv):
 
         if nflag:
             config = subprocess.check_output(
-                "cvt {} {} 60".format(x, y), shell=True, text=True).split("\n")[1].split(' ', 1)[1].replace("\"", "")
+                f"cvt {x} {y} 60", shell=True, text=True).split("\n")[1].split(' ', 1)[1].replace("\"", "")
             mode = config.split(" ")[0]
-            os.system("xrandr --newmode {}".format(config))
-            os.system("xrandr --addmode {} {}".format(output, mode))
+            os.system(f"xrandr --newmode {config}")
+            os.system(f"xrandr --addmode {output} {mode}")
         else:
             mode = resolution
 
-        options = "--output {} --mode {}".format(output, mode)
+        options = f"--output {output} --mode {mode} --panning {mode}"
 
         if cflag:
             aspectRatio = round(float(x) / float(y), 8)
             xoffset = (int(x) * float(aspectRatio) - int(x)) / 2
-            options += " --panning {} --transform {},0,-{},0,1,0,0,0,1".format(
-                mode, aspectRatio, xoffset)
-
-        os.system("xrandr {}".format(options))
+            options += f" --transform {aspectRatio},0,-{xoffset},0,1,0,0,0,1"
+        else:
+            options += f" --transform 1,0,0,0,1,0,0,0,1"
+        
+        os.system(f"xrandr {options}")
 
 
 if __name__ == "__main__":
