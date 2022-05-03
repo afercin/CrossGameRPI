@@ -1,8 +1,6 @@
 import pygame
 import threading
-import subprocess
 import time
-import os
 from logUtils import logUtils
 from datetime import datetime
 from event import *
@@ -48,6 +46,8 @@ class controllerHook(Observer):
         self.KeyDown = None
         self.KeyUp = None
         self.end = True
+        self.doublePress = False
+        self.lastKeyPressed = None
 
     def dispose(self):
         if not self.end:
@@ -93,6 +93,9 @@ class controllerHook(Observer):
         def sendKey(pressed, buttonNumber):
             if pressed:
                 self.button[buttonNumber] = True
+                self.doublePress = self.lastKeyPressed == buttonNumber and (datetime.now() - self.lastInput).total_seconds() < 0.15
+                print((datetime.now() - self.lastInput).total_seconds())
+                self.lastKeyPressed = buttonNumber
                 if self.KeyDown and not self.pause:
                     Event("OnKeyDown", buttonNumber)
             else:
