@@ -3,28 +3,32 @@ from pynput.keyboard import Controller, Key
 from irDeconder import irDecoder
 from controllerHook import *
 from logUtils import logUtils
+import requests
+
+EMULATORCONTROL = "/tmp/emulator.mode"
+
 DS4MAP = {
-    controller.A: Key.space,
-    controller.O: Key.backspace,
-    controller.Y: Key.esc,
-    controller.X: Key.enter,
+    controller.A: Key.enter,
+    controller.O: "q",
+    controller.Y: "y",
+    controller.X: "x",
     # controller.LB: Key.f1,
     # controller.RB: Key.f2,
     # controller.LT: Key.f3,
     # controller.RT: Key.f4,
-    controller.START: Key.home,
-    controller.SELECT: Key.end,
+    controller.START: "r",
+    controller.SELECT: "o",
     # controller.PS: Key.f6,
     # controller.L3: Key.f7,
     # controller.R3: Key.f8,
-    controller.L_LEFT: Key.left,
-    controller.L_UP: Key.up,
-    controller.L_RIGHT: Key.right,
-    controller.L_DOWN: Key.down,
+    controller.L_LEFT: "a",
+    controller.L_UP: "w",
+    controller.L_RIGHT: "d",
+    controller.L_DOWN: "s",
     # controller.R_LEFT: Key.f9,
-    controller.R_UP: Key.page_up,
+    # controller.R_UP: Key.page_up,
     # controller.R_RIGHT: Key.f10,
-    controller.R_DOWN: Key.page_down,
+    # controller.R_DOWN: Key.page_down,
 }
 
 IRMAP = {
@@ -34,11 +38,11 @@ IRMAP = {
     #"0x3a10c3807": "TVVolumeDownReleased",
     #"0x3a10cd807": "TVMuteReleased",
     #"0x320df10ef": "TVPower",
-    "TIVO": Key.home,
-    "Left": Key.left,
-    "Up": Key.up,
-    "Right": Key.right,
-    "Down": Key.down,
+    "TIVO": "q",
+    "Left": "a",
+    "Up": "w",
+    "Right": "d",
+    "Down": "s",
     "Ok": Key.enter,
     #"0x320dfd02f": "TVSource",
     #"0x3a10c510e": "Language",
@@ -88,7 +92,6 @@ IRMAP = {
 class keyboardTranslator():
 
     def __init__(self, verbose=False):
-        self.keyboard = Controller()
 
         self.controller = controllerHook(inactivityTime=15, verbose=True)
         self.controller.onKeyDown(self.checkControllerKeyDown)
@@ -100,7 +103,8 @@ class keyboardTranslator():
 
     def sendKey(self, key):
         self.log.info(key)
-        if not os.path.isfile("/tmp/key.lock"):
+        if not os.path.isfile(EMULATORCONTROL):
+            self.keyboard = Controller()
             self.keyboard.press(key)
             self.keyboard.release(key)
 
@@ -111,6 +115,9 @@ class keyboardTranslator():
         if self.controller.button[controller.SELECT] and self.controller.button[controller.START]:
             self.log.info("Restarting X")
             os.system("/usr/bin/restartx")
+        if self.controller.button[controller.PS] and self.controller.doublePress:
+            self.log.info("Killing emulator process")
+            requests.request("GET", "http://localhost:5000/api/v1/close-emulator")
         if keyDown in DS4MAP.keys():
             self.sendKey(DS4MAP[keyDown])
 
@@ -132,5 +139,3 @@ class keyboardTranslator():
 if __name__ == "__main__":
     a = keyboardTranslator(verbose=True)
     a.start()
-    input()
-    a.stop()
