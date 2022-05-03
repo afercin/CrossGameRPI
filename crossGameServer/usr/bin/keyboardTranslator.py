@@ -102,7 +102,6 @@ class keyboardTranslator():
         self.log = logUtils(verbose=verbose)
 
     def sendKey(self, key):
-        self.log.info(key)
         if not os.path.isfile(EMULATORCONTROL):
             self.keyboard = Controller()
             self.keyboard.press(key)
