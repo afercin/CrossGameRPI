@@ -16,7 +16,7 @@ VIDEOPATH = config["PATH"]["videos"]
 IMAGEPATH = config["PATH"]["images"]
 APIPATH = config["PATH"]["api"]
 
-EMULATORPROCESS = None
+EMULATORCONTROL = "/tmp/emulator.mode"
 
 app = Flask(__name__)
 
@@ -135,13 +135,19 @@ def launch_game():
                 isoFile = next(iso for iso in game["files"] if preferredExtension in iso)
 
             if resolution:
-                subprocess.Popen(["/usr/bin/blackWindow.py"])
-                os.system(f"python3 /usr/bin/changeResolution.py -r {resolution} -c > /tmp/change.log")
+                window = subprocess.Popen(["/usr/bin/blackWindow.py"])
+                os.system(f"python3 /usr/bin/changeResolution.py -r {resolution} -c")
+            
+            with open(EMULATORCONTROL, "w") as f:
+                f.write(emulatorName)
 
-            EMULATORPROCESS = subprocess.call([f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") +[isoFile])
+            subprocess.call([f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") +[isoFile])
+
+            os.remove(EMULATORCONTROL)
 
             if resolution:
-                os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080 >> /tmp/change.log")
+                os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080")
+                window.kill()
             
             return jsonify({'result': "Ok"})
 
@@ -149,8 +155,10 @@ def launch_game():
 
 @app.route(f"{APIPATH}/close-emulator", methods=["GET"]) 
 def close_emulator():
-    if EMULATORPROCESS != None:
-        EMULATORPROCESS.stop()
+    if os.path.isfile(EMULATORCONTROL):
+        with open(EMULATORCONTROL, "r") as f:
+            emulatorName = f.readline()
+            os.system(f"killall {emulatorName}")
         return jsonify({'result': "Ok"})
 
     return jsonify({'result': "Not ok"})
