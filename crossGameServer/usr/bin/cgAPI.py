@@ -156,9 +156,8 @@ def launch_game():
 @app.route(f"{APIPATH}/close-emulator", methods=["GET"]) 
 def close_emulator():
     if os.path.isfile(EMULATORCONTROL):
-        with open(EMULATORCONTROL, "r") as f:
-            emulatorName = f.readline()
-            os.system(f"killall {emulatorName}")
+        os.remove(EMULATORCONTROL)
+        os.system("killall crossgame")
         return jsonify({'result': "Ok"})
 
     return jsonify({'result': "Not ok"})

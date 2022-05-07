@@ -94,7 +94,6 @@ class controllerHook(Observer):
             if pressed:
                 self.button[buttonNumber] = True
                 self.doublePress = self.lastKeyPressed == buttonNumber and (datetime.now() - self.lastInput).total_seconds() < 0.15
-                print((datetime.now() - self.lastInput).total_seconds())
                 self.lastKeyPressed = buttonNumber
                 if self.KeyDown and not self.pause:
                     Event("OnKeyDown", buttonNumber)
