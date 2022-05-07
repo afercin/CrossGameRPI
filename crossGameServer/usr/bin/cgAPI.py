@@ -17,6 +17,7 @@ IMAGEPATH = config["PATH"]["images"]
 APIPATH = config["PATH"]["api"]
 
 EMULATORCONTROL = "/tmp/emulator.mode"
+CROSSGAMEMODE = "/tmp/crossgame.mode"
 
 app = Flask(__name__)
 
@@ -161,6 +162,15 @@ def close_emulator():
         return jsonify({'result': "Ok"})
 
     return jsonify({'result': "Not ok"})
+    
+@app.route(f"{APIPATH}/crossgame-mode", methods=["GET"]) 
+def get_crossgame_mode():
+    if os.path.isfile(CROSSGAMEMODE):
+        with open(CROSSGAMEMODE, "r") as f:
+            mode = f.read()
+        return jsonify({'mode': mode})
+
+    return jsonify({'mode': "main"})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
