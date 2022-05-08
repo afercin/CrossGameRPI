@@ -14,12 +14,14 @@ IMAGEPATH = config["PATH"]["images"]
 
 EMULATORCONTROL = "/tmp/emulator.mode"
 
+
 def getFilesByPath(startPath):
     files = []
     for (dirpath, _, filenames) in os.walk(startPath):
         for file in filenames:
             files.append("{}/{}".format(dirpath, file))
     return files
+
 
 def getGamesByEmulator(emulator):
     folder = f"{ROMSPATH}/{emulator}"
@@ -29,18 +31,23 @@ def getGamesByEmulator(emulator):
         ls = os.listdir(f"{folder}/{entry}")
 
         if os.path.isfile(f"{folder}/{entry}/{ls[0]}"):
-            games.append({"name": entry, "files": getFilesByPath(f"{folder}/{entry}")})
+            games.append(
+                {"name": entry, "files": getFilesByPath(f"{folder}/{entry}")})
         else:
             for disk in ls:
-                games.append({"name": f"{entry} {disk}", "files": getFilesByPath(f"{folder}/{entry}/{disk}")})
+                games.append({"name": f"{entry} {disk}", "files": getFilesByPath(
+                    f"{folder}/{entry}/{disk}")})
     return games
+
 
 def getAllGames():
     allGames = []
     for emulator in os.listdir(ROMSPATH):
         if not os.path.isfile(ROMSPATH + "/" + emulator):
-            allGames.append({"name": emulator, "games": getGamesByEmulator(emulator)})
+            allGames.append(
+                {"name": emulator, "games": getGamesByEmulator(emulator)})
     return allGames
+
 
 def getGameImages(game):
     images = []
@@ -53,8 +60,9 @@ def getGameImages(game):
 
     if os.path.isfile(f"{IMAGEPATH}/{game}_miniature.jpg"):
         images.append(f"{IMAGEPATH}/{game}_miniature.jpg")
-    
+
     return images
+
 
 def launchGame(name, emulator):
     for game in getGamesByEmulator(emulator):
@@ -67,28 +75,32 @@ def launchGame(name, emulator):
             args = config[emulator.upper()]["args"]
 
             if not preferredExtension:
-                isoFile = game["isos"][0];
+                isoFile = game["isos"][0]
             else:
-                isoFile = next(iso for iso in game["files"] if preferredExtension in iso)
+                isoFile = next(
+                    iso for iso in game["files"] if preferredExtension in iso)
 
             if resolution:
                 window = subprocess.Popen(["/usr/bin/blackWindow.py"])
-                os.system(f"python3 /usr/bin/changeResolution.py -r {resolution} -c")
-            
+                os.system(
+                    f"python3 /usr/bin/changeResolution.py -r {resolution} -c")
+
             with open(EMULATORCONTROL, "w") as f:
                 f.write(emulatorName)
 
-            subprocess.call([f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") +[isoFile])
+            subprocess.call(
+                [f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") + [isoFile])
 
             os.remove(EMULATORCONTROL)
 
             if resolution:
                 os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080")
                 window.kill()
-            
+
             return True
 
     return False
+
 
 def stopGame():
     if os.path.isfile(EMULATORCONTROL):

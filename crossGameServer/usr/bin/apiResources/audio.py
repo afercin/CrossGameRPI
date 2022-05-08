@@ -1,7 +1,8 @@
 import subprocess
 import os
 
-def sink_list():
+
+def sinkList():
     rawText = subprocess.getoutput("pacmd list-sinks")
     sinks = {}
     for line in rawText.split("\n"):
@@ -16,11 +17,11 @@ def sink_list():
 
     return sinks
 
-def set_sink(sinkN):
-    return os.system(f"pacmd set-default-sink {sinkN}") == 0
 
-def volumeUp():
-    return os.system("amixer -D pulse sset Master 1%+") == 0
+def setSink(sinkN): return os.system(f"pacmd set-default-sink {sinkN}") == 0
 
-def volumeDown():
-    return os.system("amixer -D pulse sset Master 1%-") == 0
+
+def volumeUp(): return os.system("amixer -D pulse sset Master 1%+") == 0
+
+
+def volumeDown(): return os.system("amixer -D pulse sset Master 1%-") == 0

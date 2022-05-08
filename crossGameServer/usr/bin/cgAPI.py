@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from flask import Flask, request, jsonify
-import subprocess
 import configparser
 import os
 from apiResources.audio import *
@@ -56,7 +55,7 @@ VIDEOPATH = config["PATH"]["videos"]
 def get_videos(): return jsonify(getFilesByPath(VIDEOPATH))
 
 
-@app.route(f"{APIPATH}/video/open", methods=["POST"])
+@app.route(f"{APIPATH}/video/open", methods=["GET"])
 def open_video():
     videoPath = request.args["path"]
     subprocess.call(["vlc", "-f", videoPath])
@@ -69,12 +68,12 @@ CROSSGAMEMODE = "/tmp/crossgame.mode"
 
 
 @app.route(f"{APIPATH}/system/audio", methods=["GET"])
-def get_audiodevice(): return sink_list()
+def get_audiodevice(): return sinkList()
 
 
 @app.route(f"{APIPATH}/system/audio", methods=["POST"])
 def set_audiodevice(): return jsonify(
-    {"message": "success" if set_sink(request.args["sink"]) else "fail"})
+    {"message": "success" if setSink(request.args["sink"]) else "fail"})
 
 
 @app.route(f"{APIPATH}/system/audio/volume-up", methods=["GET"])
