@@ -3,174 +3,99 @@ from flask import Flask, request, jsonify
 import subprocess
 import configparser
 import os
+from apiResources.audio import *
+from apiResources.games import *
 
 CONFFILE = "/etc/productConf/cg.conf"
 if "dev" in os.path.abspath(os.getcwd()):
     CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameServer" + CONFFILE
 
+app = Flask(__name__)
+
 config = configparser.ConfigParser()
 config.read(CONFFILE)
 
-ROMSPATH = config["PATH"]["roms"]
-VIDEOPATH = config["PATH"]["videos"]
-IMAGEPATH = config["PATH"]["images"]
 APIPATH = config["PATH"]["api"]
 
-EMULATORCONTROL = "/tmp/emulator.mode"
-CROSSGAMEMODE = "/tmp/crossgame.mode"
+# GAMES
 
-app = Flask(__name__)
-
-def getFilesByPath(startPath):
-    files = []
-    for (dirpath, _, filenames) in os.walk(startPath):
-        for file in filenames:
-            files.append("{}/{}".format(dirpath, file))
-    return files
-
-def getGamesByEmulator(emulator):
-    folder = f"{ROMSPATH}/{emulator}"
-    games = []
-    for entry in os.listdir(folder):
-
-        ls = os.listdir(f"{folder}/{entry}")
-
-        if os.path.isfile(f"{folder}/{entry}/{ls[0]}"):
-            games.append({"name": entry, "files": getFilesByPath(f"{folder}/{entry}")})
-        else:
-            for disk in ls:
-                games.append({"name": f"{entry} {disk}", "files": getFilesByPath(f"{folder}/{entry}/{disk}")})
-    return games
-
-def getAllGames():
-    allGames = []
-    for emulator in os.listdir(ROMSPATH):
-        if not os.path.isfile(ROMSPATH + "/" + emulator):
-            allGames.append({"name": emulator, "games": getGamesByEmulator(emulator)})
-    return allGames
 
 @app.route(f"{APIPATH}/games", methods=["GET"])
-def get_games():
-    return jsonify(getAllGames())
+def get_games(): return jsonify(getAllGames())
 
 
-@app.route(f"{APIPATH}/videos", methods=["GET"])
-def get_videos():
-    return jsonify(getFilesByPath(VIDEOPATH))
+@app.route(f"{APIPATH}/game/images", methods=["GET"])
+def get_images_from_game(): return jsonify(getGameImages(request.args["game"]))
 
 
-@app.route(f"{APIPATH}/audio", methods=["GET"])
-def get_audiodevice():
-    rawText = subprocess.getoutput("pacmd list-sinks")
-    audioDevices = {}
-    for line in rawText.split("\n"):
-        if "index:" in line:
-            index = line.split(": ")[1]
-            audioDevices[index] = {
-                "name": "",
-                "active": "*" in line
-            }
-        if "name:" in line:
-            audioDevices[index]["name"] = line.split(": ")[1]
-
-    return audioDevices
-
-
-@app.route(f"{APIPATH}/audio", methods=["POST"])
-def set_audiodevice():
-    sink = request.args["sink"]
-    if os.system("pacmd set-default-sink {}".format(sink)) == 0:
-        return jsonify({'message': 'success'})
-    else:
-        return jsonify({'message': 'fail'})
-
-
-@app.route(f"{APIPATH}/images", methods=["GET"])
-def get_images_from_game():
-    game = request.args["game"]
-    images = []
-
-    if "Disco" in game:
-        game = game.split("Disco")[0].strip()
-        
-    if os.path.isfile(f"{IMAGEPATH}/{game}.jpg"):
-        images.append(f"{IMAGEPATH}/{game}.jpg")
-
-    if os.path.isfile(f"{IMAGEPATH}/{game}_miniature.jpg"):
-        images.append(f"{IMAGEPATH}/{game}_miniature.jpg")
-
-    return jsonify(images)
-
-@app.route(f"{APIPATH}/get-miniature", methods=["GET"]) 
-def get_game_miniature():
-    game = request.args["game"]
-    image = None
-
-    if "Disco" in game:
-        game = game.split("Disco")[0].strip()
-
-    if os.path.isfile(f"{IMAGEPATH}/{game}_miniature.jpg"):
-        with open(f"{IMAGEPATH}/{game}_miniature.jpg", "rb") as image:
+@app.route(f"{APIPATH}/game/image", methods=["GET"])
+def get_game_image():
+    imagePath = request.args["path"]
+    if os.path.isfile(imagePath):
+        with open(imagePath, "rb") as image:
             f = image.read()
             return bytearray(f)
 
-    return jsonify({'message': 'fail'})
+    return jsonify({"message": "fail"})
 
-@app.route(f"{APIPATH}/launch-game", methods=["GET"]) 
-def launch_game():
-    name = request.args["name"]
-    emulator = request.args["emulator"]
 
-    for game in getGamesByEmulator(emulator):
-        if name in game["name"]:
+@app.route(f"{APIPATH}/game/launch", methods=["GET"])
+def launch(): return jsonify({"result": "success" if launchGame(
+    request.args["name"], request.args["emulator"]) else "fail"})
 
-            emulatorsPath = config["PATH"]["emulators"]
-            emulatorName = config[emulator.upper()]["emulatorName"]
-            preferredExtension = config[emulator.upper()]["preferredExtension"]
-            resolution = config[emulator.upper()]["resolution"]
-            args = config[emulator.upper()]["args"]
 
-            if not preferredExtension:
-                isoFile = game["isos"][0];
-            else:
-                isoFile = next(iso for iso in game["files"] if preferredExtension in iso)
+@app.route(f"{APIPATH}/game/close", methods=["GET"])
+def close(): return jsonify({"result": "success" if stopGame() else "fail"})
 
-            if resolution:
-                window = subprocess.Popen(["/usr/bin/blackWindow.py"])
-                os.system(f"python3 /usr/bin/changeResolution.py -r {resolution} -c")
-            
-            with open(EMULATORCONTROL, "w") as f:
-                f.write(emulatorName)
 
-            subprocess.call([f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") +[isoFile])
+# VIDEOS
+VIDEOPATH = config["PATH"]["videos"]
 
-            os.remove(EMULATORCONTROL)
 
-            if resolution:
-                os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080")
-                window.kill()
-            
-            return jsonify({'result': "Ok"})
+@app.route(f"{APIPATH}/videos", methods=["GET"])
+def get_videos(): return jsonify(getFilesByPath(VIDEOPATH))
 
-    return jsonify({'result': "Not ok"})
 
-@app.route(f"{APIPATH}/close-emulator", methods=["GET"]) 
-def close_emulator():
-    if os.path.isfile(EMULATORCONTROL):
-        os.remove(EMULATORCONTROL)
-        os.system("killall crossgame")
-        return jsonify({'result': "Ok"})
+@app.route(f"{APIPATH}/video/open", methods=["POST"])
+def open_video():
+    videoPath = request.args["path"]
+    subprocess.call(["vlc", "-f", videoPath])
+    return jsonify({"result": "success"})
+    return jsonify({"result": "fail"})
 
-    return jsonify({'result': "Not ok"})
-    
-@app.route(f"{APIPATH}/crossgame-mode", methods=["GET"]) 
+
+# SYSTEM
+CROSSGAMEMODE = "/tmp/crossgame.mode"
+
+
+@app.route(f"{APIPATH}/system/audio", methods=["GET"])
+def get_audiodevice(): return sink_list()
+
+
+@app.route(f"{APIPATH}/system/audio", methods=["POST"])
+def set_audiodevice(): return jsonify(
+    {"message": "success" if set_sink(request.args["sink"]) else "fail"})
+
+
+@app.route(f"{APIPATH}/system/audio/volume-up", methods=["GET"])
+def set_volumeUp(): return jsonify(
+    {"message": "success" if volumeUp() else "fail"})
+
+
+@app.route(f"{APIPATH}/system/audio/volume-down", methods=["GET"])
+def set_volumeDown(): return jsonify(
+    {"message": "success" if volumeDown() else "fail"})
+
+
+@app.route(f"{APIPATH}/system/mode", methods=["GET"])
 def get_crossgame_mode():
+    mode = "main"
     if os.path.isfile(CROSSGAMEMODE):
         with open(CROSSGAMEMODE, "r") as f:
             mode = f.read()
-        return jsonify({'mode': mode})
 
-    return jsonify({'mode': "main"})
+    return jsonify({"mode": mode})
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

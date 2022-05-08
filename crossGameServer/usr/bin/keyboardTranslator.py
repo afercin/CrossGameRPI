@@ -116,7 +116,7 @@ class keyboardTranslator():
             os.system("/usr/bin/restartx")
         if self.controller.button[controller.PS] and self.controller.doublePress:
             self.log.info("Killing emulator process")
-            requests.request("GET", "http://localhost:5000/api/v1/close-emulator")
+            requests.request("GET", "http://localhost:5000/api/v1/game/close")
         if keyDown in DS4MAP.keys():
             self.sendKey(DS4MAP[keyDown])
 
