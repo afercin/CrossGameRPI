@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify
 import configparser
 from apiResources.audio import *
 from apiResources.games import *
+from playsound import playsound
+import os
 
 CONFFILE = "/etc/productConf/cg.conf"
 if "dev" in os.path.abspath(os.getcwd()):
@@ -99,6 +101,7 @@ CROSSGAMEMODE = "/tmp/crossgame.mode"
 def restartx(controlFile):
     if os.path.isfile(controlFile):
         os.remove(controlFile)
+        playsound("/rpì/apptk/sounds/enter.wav")
         return os.system("killall crossgame") == 0
     return False
 
