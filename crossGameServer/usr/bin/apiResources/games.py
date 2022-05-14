@@ -64,6 +64,20 @@ def getGameImages(game):
     return images
 
 
+def openSubprocess(program, args, file, resolution, center=True):
+    if resolution:
+        window = subprocess.Popen(["/usr/bin/blackWindow.py"])
+        os.system(
+            f"python3 /usr/bin/changeResolution.py -r {resolution}" + "-c" if center else "")
+
+    subprocess.call(
+        [program] + str(args).split(";") + [file])
+
+    if resolution:
+        os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080")
+        window.kill()
+
+
 def launchGame(name, emulator):
     for game in getGamesByEmulator(emulator):
         if name in game["name"]:
@@ -80,30 +94,16 @@ def launchGame(name, emulator):
                 isoFile = next(
                     iso for iso in game["files"] if preferredExtension in iso)
 
-            if resolution:
-                window = subprocess.Popen(["/usr/bin/blackWindow.py"])
-                os.system(
-                    f"python3 /usr/bin/changeResolution.py -r {resolution} -c")
-
             with open(EMULATORCONTROL, "w") as f:
                 f.write(emulatorName)
-
-            subprocess.call(
-                [f"{emulatorsPath}/{emulator}/{emulatorName}"] + str(args).split(";") + [isoFile])
+            
+            openSubprocess(program=f"{emulatorsPath}/{emulator}/{emulatorName}",
+                           args=args,
+                           file=isoFile,
+                           resolution=resolution)
 
             os.remove(EMULATORCONTROL)
 
-            if resolution:
-                os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080")
-                window.kill()
-
             return True
 
-    return False
-
-
-def stopGame():
-    if os.path.isfile(EMULATORCONTROL):
-        os.remove(EMULATORCONTROL)
-        return os.system("killall crossgame") == 0
     return False

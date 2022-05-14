@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from flask import Flask, request, jsonify
 import configparser
-import os
 from apiResources.audio import *
 from apiResources.games import *
 
@@ -17,6 +16,7 @@ config.read(CONFFILE)
 APIPATH = config["PATH"]["api"]
 
 # GAMES
+EMULATORCONTROL = "/tmp/emulator.mode"
 
 
 @app.route(f"{APIPATH}/games", methods=["GET"])
@@ -35,7 +35,7 @@ def get_game_image():
             f = image.read()
             return bytearray(f)
 
-    return jsonify({"message": "fail"})
+    return jsonify({"result": "fail"})
 
 
 @app.route(f"{APIPATH}/game/launch", methods=["GET"])
@@ -43,12 +43,20 @@ def launch(): return jsonify({"result": "success" if launchGame(
     request.args["name"], request.args["emulator"]) else "fail"})
 
 
-@app.route(f"{APIPATH}/game/close", methods=["GET"])
-def close(): return jsonify({"result": "success" if stopGame() else "fail"})
+@app.route(f"{APIPATH}/game/iconset", methods=["GET"])
+def get_iconset(): return jsonify({"result": config["DEFAULT"]["iconset"]})
+
+
+@app.route(f"{APIPATH}/game/iconset", methods=["POST"])
+def set_iconset():
+    config["DEFAULT"]["iconset"] = request.args["name"]
+    config.write()
+    return jsonify({"result": "success"})
 
 
 # VIDEOS
 VIDEOPATH = config["PATH"]["videos"]
+VIDEOCONTROL = "/tmp/video.mode"
 
 
 @app.route(f"{APIPATH}/videos", methods=["GET"])
@@ -57,14 +65,52 @@ def get_videos(): return jsonify(getFilesByPath(VIDEOPATH))
 
 @app.route(f"{APIPATH}/video/open", methods=["GET"])
 def open_video():
-    videoPath = request.args["path"]
-    subprocess.call(["vlc", "-f", videoPath])
+    name = request.args["name"]
+    videoPath = f"{VIDEOPATH}/{name}"
+    """video = cv2.VideoCapture(videoPath)
+    height = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    width = video.get(cv2.CAP_PROP_FRAME_WIDTH)
+    print(videoPath)
+    print(f"{width}x{height}")
+
+    if width >= 1920 or height >= 1080:
+        resolution = ""
+    """
+
+    resolution = "720x400"
+    with open(VIDEOCONTROL, "w") as f:
+        f.write(videoPath)
+
+    openSubprocess(program="vlc",
+                   args="-f",
+                   file=videoPath,
+                   resolution=resolution,
+                   center=False)
+
+    os.remove(VIDEOCONTROL)
+
     return jsonify({"result": "success"})
     return jsonify({"result": "fail"})
 
 
 # SYSTEM
 CROSSGAMEMODE = "/tmp/crossgame.mode"
+
+def restartx(controlFile):
+    if os.path.isfile(controlFile):
+        os.remove(controlFile)
+        return os.system("killall crossgame") == 0
+    return False
+
+@app.route(f"{APIPATH}/system/restartx", methods=["GET"])
+def close():
+    result = "fail"
+    with open(CROSSGAMEMODE) as f:
+        mode = f.read()
+        if mode == "videos" and restartx(VIDEOCONTROL) or mode == "games" and restartx(EMULATORCONTROL):
+            result = "success"
+    
+    return jsonify({"result": result})
 
 
 @app.route(f"{APIPATH}/system/audio", methods=["GET"])
@@ -73,17 +119,22 @@ def get_audiodevice(): return sinkList()
 
 @app.route(f"{APIPATH}/system/audio", methods=["POST"])
 def set_audiodevice(): return jsonify(
-    {"message": "success" if setSink(request.args["sink"]) else "fail"})
+    {"result": "success" if setSink(request.args["sink"]) else "fail"})
 
 
 @app.route(f"{APIPATH}/system/audio/volume-up", methods=["GET"])
 def set_volumeUp(): return jsonify(
-    {"message": "success" if volumeUp() else "fail"})
+    {"result": "success" if volumeUp() else "fail"})
 
 
 @app.route(f"{APIPATH}/system/audio/volume-down", methods=["GET"])
 def set_volumeDown(): return jsonify(
-    {"message": "success" if volumeDown() else "fail"})
+    {"result": "success" if volumeDown() else "fail"})
+
+
+@app.route(f"{APIPATH}/system/audio/toogle", methods=["GET"])
+def toogle_audio(): return jsonify(
+    {"result": "success" if toogleAudio() else "fail"})
 
 
 @app.route(f"{APIPATH}/system/mode", methods=["GET"])
@@ -95,6 +146,18 @@ def get_crossgame_mode():
 
     return jsonify({"mode": mode})
 
+
+@app.route(f"{APIPATH}/system/initialize", methods=["GET"])
+def initialize():
+    if os.path.isfile(EMULATORCONTROL):
+        os.remove(EMULATORCONTROL)
+
+    if os.path.isfile(VIDEOCONTROL):
+        os.remove(VIDEOCONTROL)
+
+    setSink(config["DEFAULT"]["sink"])
+    setVolume(str(config["DEFAULT"]["volume"]) + "%")
+    return jsonify({"result": "success"})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

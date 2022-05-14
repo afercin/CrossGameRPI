@@ -21,7 +21,13 @@ def sinkList():
 def setSink(sinkN): return os.system(f"pacmd set-default-sink {sinkN}") == 0
 
 
-def volumeUp(): return os.system("amixer -D pulse sset Master 1%+") == 0
+def volumeUp(): return setVolume("5%+")
 
 
-def volumeDown(): return os.system("amixer -D pulse sset Master 1%-") == 0
+def volumeDown(): return setVolume("5%-")
+
+
+def setVolume(volume): return os.system(f"amixer -D pulse set Master {volume}") == 0
+
+
+def toogleAudio(): return os.system("amixer -D pulse set Master toggle") == 0

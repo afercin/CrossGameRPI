@@ -32,43 +32,43 @@ DS4MAP = {
 }
 
 IRMAP = {
-    #"0x3a10c0807": "TVPowerReleased",
-    #"0x3a10c2c03": "TVSourceReleased",
-    #"0x3a10cb807": "TVVolumeUpReleased",
-    #"0x3a10c3807": "TVVolumeDownReleased",
-    #"0x3a10cd807": "TVMuteReleased",
-    #"0x320df10ef": "TVPower",
+    #"TVPowerReleased": "TVPowerReleased",
+    #"TVSourceReleased": "TVSourceReleased",
+    #"TVVolumeUpReleased": "TVVolumeUpReleased",
+    #"TVVolumeDownReleased": "TVVolumeDownReleased",
+    #"TVMuteReleased": "TVMuteReleased",
+    #"TVPower": "TVPower",
     "TIVO": "q",
     "Left": "a",
     "Up": "w",
     "Right": "d",
     "Down": "s",
     "Ok": Key.enter,
-    #"0x320dfd02f": "TVSource",
-    #"0x3a10c510e": "Language",
-    #"0x3a10c220d": "Zoom",
-    "Guide": Key.home,
-    "Info": Key.end,
-    #"0x3a10c8807": "ShowTV",
+    #"TVSource": "TVSource",
+    #"Language": "Language",
+    #"Zoom": "Zoom",
+    #"Guide": Key.home,
+    #"Info": Key.end,
+    #"ShowTV": "ShowTV",
 
-    #"0x320df40bf": "TVVolumeUp",
-    #"0x320dfc03f": "TVVolumeDown",
-    #"0x320df906f": "TVMute",
+    "TVVolumeUp": "+",
+    "TVVolumeDown": "-",
+    "TVMute": "mute",
 
-    "ProgUp": Key.page_up,
-    "ProgDown": Key.page_down,
-    # "0x3a10c1807": "Dislike",
-    # "0x3a10c040b": "Rec",
-    # "0x3a10c5807": "Like",
+    #"ProgUp": Key.page_up,
+    #"ProgDown": Key.page_down,
+    # "Dislike": "Dislike",
+    # "Rec": "Rec",
+    # "Like": "Like",
 
-    # "0x3a10c840b": "Play",
-    # "0x3a10cc40b": "Pause",
-    # "0x3a10c440b": "Prev",
-    # "0x3a10c240b": "Next",
-    # "0x3a10c640b": "Back",
-    # "0x3a10ca40b": "Slow",
-    # "0x3a10ce40b": "GoOn",
-    # "0x3a10cba05": "Videoclub",
+    "Play": Key.space,
+    "Pause": Key.space,
+    "Prev": Key.left,
+    "Next": Key.right,
+    # "Back": "Back",
+    # "Slow": "Slow",
+    # "GoOn": "GoOn",
+    # "Videoclub": "Videoclub",
 
     "Red": Key.f1,
     "Green": Key.f2,
@@ -102,25 +102,35 @@ class keyboardTranslator():
         self.log = logUtils(verbose=verbose)
 
     def sendKey(self, key):
-        if not os.path.isfile(EMULATORCONTROL):
+        if key == "+":
+            requests.request("GET", "http://localhost:5000/api/v1/system/audio/volume-up")
+        elif key == "-":
+            requests.request("GET", "http://localhost:5000/api/v1/system/audio/volume-down")
+        elif key == "mute":
+            requests.request("GET", "http://localhost:5000/api/v1/system/audio/toogle")
+        elif key == "powerOff":
+            os.system("shutdown -f 0")
+        elif key == "restartx":
+            requests.request("GET", "http://localhost:5000/api/v1/system/restartx")
+        elif not os.path.isfile(EMULATORCONTROL):
             self.keyboard = Controller()
             self.keyboard.press(key)
             self.keyboard.release(key)
 
     def checkControllerKeyDown(self, keyDown):
         if self.controller.button[controller.PS] and self.controller.button[controller.SELECT]:
-            self.log.info("Powering off")
-            os.system("shutdown -f 0")
-        if self.controller.button[controller.SELECT] and self.controller.button[controller.START]:
-            self.log.info("Restarting X")
-            os.system("/usr/bin/restartx")
-        if self.controller.button[controller.PS] and self.controller.doublePress:
-            self.log.info("Killing emulator process")
-            requests.request("GET", "http://localhost:5000/api/v1/game/close")
-        if keyDown in DS4MAP.keys():
+            self.sendKey("powerOff")
+        if self.controller.button[controller.SELECT] and self.controller.button[controller.START] or \
+           self.controller.button[controller.PS] and self.controller.doublePress:
+            self.sendKey("restartx")
+        elif keyDown in DS4MAP.keys():
             self.sendKey(DS4MAP[keyDown])
 
     def checkDecoderDataReceived(self, keyDown):
+        if keyDown == "Power":
+            self.sendKey("powerOff")
+        if keyDown == "Back":
+            self.sendKey("restartx")
         if keyDown in IRMAP.keys():
             self.sendKey(IRMAP[keyDown])
 
