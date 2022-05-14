@@ -65,7 +65,7 @@ IRMAP = {
     "Pause": Key.space,
     "Prev": Key.left,
     "Next": Key.right,
-    # "Back": "Back",
+    "Back": "Back",
     # "Slow": "Slow",
     # "GoOn": "GoOn",
     # "Videoclub": "Videoclub",
@@ -129,9 +129,10 @@ class keyboardTranslator():
     def checkDecoderDataReceived(self, keyDown):
         if keyDown == "Power":
             self.sendKey("powerOff")
-        if keyDown == "Back":
+        elif keyDown == "Back":
             self.sendKey("restartx")
-        if keyDown in IRMAP.keys():
+            self.sendKey("Q")
+        elif keyDown in IRMAP.keys():
             self.sendKey(IRMAP[keyDown])
 
     def start(self):
