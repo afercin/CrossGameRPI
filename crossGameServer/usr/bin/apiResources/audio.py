@@ -27,7 +27,12 @@ def volumeUp(): return setVolume("5%+")
 def volumeDown(): return setVolume("5%-")
 
 
-def setVolume(volume): return os.system(f"amixer -D pulse set Master {volume}") == 0
+def toogleAudio(): return setVolume("toggle")
 
 
-def toogleAudio(): return os.system("amixer -D pulse set Master toggle") == 0
+def setVolume(volume):
+    sinks = sinkList()
+    for i in range(0, len(sinks)):
+        if "alsa_output.platform-fef05700.hdmi.iec958-stereo" in sinks[f"{i}"]["name"] and sinks[f"{i}"]["active"]:
+            return False;
+    return os.system(f"amixer -D pulse set Master {volume}") == 0
