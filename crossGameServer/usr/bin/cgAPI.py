@@ -101,7 +101,7 @@ CROSSGAMEMODE = "/tmp/crossgame.mode"
 def restartx(controlFile):
     if os.path.isfile(controlFile):
         os.remove(controlFile)
-        playsound("/rpì/apptk/sounds/enter.wav")
+        playsound("/rpi/apptk/sounds/enter.wav")
         return os.system("killall crossgame") == 0
     return False
 
