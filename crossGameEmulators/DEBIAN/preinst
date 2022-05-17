@@ -1,9 +1,11 @@
 #!/bin/bash
-dirs=("/usr/share/server/emulators")
 
-for dir in ${dirs[@]}; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Creating '${dir}'..."
-        mkdir "$dir"
-    fi
-done
+if [ -d "/rpi/emulators_back" ]; then
+    echo "Deleting old emulator backups"
+    rm -r "/rpi/emulators_back"
+fi
+
+if [ -d "/rpi/emulators" ]; then
+    echo "Creating backup for current emulators compilation"
+    cp -r "/rpi/emulators" "/rpi/emulators_back"
+fi

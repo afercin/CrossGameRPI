@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+    compiler:
+        build: .
+        container_name: crossgame.compiler
+        ports:
+         - "8000:5000"
+        volumes:
+         - ../release:/release
+         - ./scripts:/scripts
+         - ../.third-party:/third-party
+         - ../crossGameEmulators:/emulators
+         - ../crossGameServer:/server
+        command: bash -c "
+            /scritps/emulators_compile.sh
+            dpkg-deb --build --root-owner-group /emulators
+            dpkg-deb --build --root-owner-group /server
+            mv *.dev /reselase/"

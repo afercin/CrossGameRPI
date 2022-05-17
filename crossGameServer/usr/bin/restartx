@@ -16,4 +16,6 @@ if [[ $uflag == "true" ]]; then
     exit 0
 fi
 
-[[ kill $(ps aux | grep xorg | grep $tty | awk '{ print $2 }') ]] || pkill -9 -t $tty
+if ! kill $(ps aux | grep xorg | grep $tty | awk '{ print $2 }'); then
+    pkill -9 -t $tty
+fi

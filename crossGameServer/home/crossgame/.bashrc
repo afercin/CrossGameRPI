@@ -129,7 +129,6 @@ done
 
 [[ -f "/tmp/needreboot" ]] && reboot
 
-python3 /usr/bin/installDependencies.py
 while [[ ! -f "/tmp/debug" ]]; do
     clear
     startx -- -nocursor > /tmp/xserver.log 2>&1

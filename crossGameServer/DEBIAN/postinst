@@ -14,7 +14,7 @@ sudo chmod 777 "/var/log/product"
 chown crossgame:adrix "/rpi"
 
 #Añadir privilegios de ejecución para los scripts
-scripts=("restartx" "swapmode" "automount" "restorepoint" "cgAPI.py")
+scripts=("restartx" "automount" "restorepoint")
 for script in ${scripts[@]}; do
     echo "Adding execution privileges to '$script'..."
     chmod 777 "/usr/bin/${script}"
@@ -23,6 +23,12 @@ done
 #Establecer contraseña root
 echo "Setting root password..."
 sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
+
+#Cambiar nombre de usuario
+echo "Setting up crossgame user"
+usermod -l "crossgame" -d "/home/cossgame" -m "ubuntu"
+mv "/home/ubuntu" "/home/crossgame"
+
 
 #Iniciar equipo sin gui
 systemctl set-default multi-user
@@ -41,19 +47,15 @@ chmod u+x "/etc/rc.local"
 systemctl enable rc-local
 systemctl start rc-local
 
-echo "Setting up api REST service..."
-systemctl enable apiRest.service
-systemctl start apiRest.service
-
 #Establecer zona horaria
 echo "Setting Europe/Madrid timezone..."
 sudo timedatectl set-timezone Europe/Madrid 
 
 #Configurar Samba
-echo "Configuring samba root user..."
-PASS="patata123"
-echo -ne "$PASS\n$PASS\n" | smbpasswd -a -s "root"
-sudo service smbd restart
+#echo "Configuring samba root user..."
+#PASS="patata123"
+#echo -ne "$PASS\n$PASS\n" | smbpasswd -a -s "root"
+#sudo service smbd restart
 
 #Preparar repositorio para instalar docker
 echo "Adding docker repository..."
@@ -85,8 +87,9 @@ else
 fi
 
 #Instalar librería de python
-echo "Installing screeninfo"
-pip install screeninfo 
+pythonDependencies=("screeninfo" "ds4drv" "pygame" "pynput" "playsound")
 
-#Agregar repositorio de nodejs
-curl -sL https://deb.nodesource.com/setup_17.x | sudo -E bash -
+for dependency in ${pythonDependencies[@]}; do
+    echo "Installing $dependency"
+    pip install $dependency
+done 

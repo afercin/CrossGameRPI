@@ -1,7 +1,0 @@
-Package: CrossGameWeb
-Version: 0.1.22
-Architecture: all
-Depends: crossgameserver, docker-ce, docker-ce-cli, containerd.io
-Maintainer: Internal Pointers <info@internalpointers.com>
-Description: A program that greets you.
- You can add a longer description here. Mind the space at the beginning of this paragraph.

@@ -1,4 +1,6 @@
 *__pycache__
 *deb
 .vscode
-build
+release
+.third-party
+rpi
