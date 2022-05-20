@@ -39,4 +39,4 @@ make install
 
 echo "Copying PSP emulator files to emulator folder..."
 mkdir -p "$emulators/psp"
-cp "$tmpfolder/psp/build/PPSSPPSDL" "$emulators/psp/"
+cp -r "$tmpfolder/psp/assets" "$tmpfolder/psp/build/PPSSPPSDL" "$emulators/psp/"

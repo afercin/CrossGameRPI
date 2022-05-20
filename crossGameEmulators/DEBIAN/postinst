@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo "Creating PS1 memcards folder soft link..."
-ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
+ln -s "/rpi/emulators/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
 
 echo "Creating PSP memcards folder soft link..."
-ln -s "/rpi/content/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
+ln -s "/rpi/emulators/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
 
 echo "Updating user owner for emulators conf folder"
 chown -R crossgame:adrix "/home/crossgame/.local/share/duckstation"
