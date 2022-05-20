@@ -103,7 +103,7 @@ def restartx(controlFile):
     if os.path.isfile(controlFile):
         os.remove(controlFile)
         playsound(f"{SOUNDSFOLDER}/enter.wav")
-        return os.system("killall crossgame") == 0
+        return os.system("killall crossgameapp") == 0
     return False
 
 @app.route(f"{APIPATH}/system/restartx", methods=["GET"])
