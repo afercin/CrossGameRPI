@@ -11,11 +11,7 @@ do
     esac
 done
 
-if [[ $uflag == "true" ]]; then
+if [[ $uflag == "true" ]] || ! kill $(ps aux | grep xorg | grep $tty | awk '{ print $2 }'); then
     pkill -9 -t $tty
     exit 0
-fi
-
-if ! kill $(ps aux | grep xorg | grep $tty | awk '{ print $2 }'); then
-    pkill -9 -t $tty
 fi

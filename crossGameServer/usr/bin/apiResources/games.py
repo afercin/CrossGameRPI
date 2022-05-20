@@ -66,7 +66,7 @@ def getGameImages(game):
 
 def openSubprocess(program, args, file, resolution, center=True):
     if resolution:
-        window = subprocess.Popen(["/usr/bin/blackWindow.py"])
+        window = subprocess.Popen(["/usr/bin/apiResources/blackWindow.py"])
         os.system(
             f"python3 /usr/bin/changeResolution.py -r {resolution}" + (" -c" if center else ""))
 
