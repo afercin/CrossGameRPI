@@ -1,7 +1,7 @@
-emulators="/emulators/rpi/emulators"
+emulators="/crossGameEmulators/rpi/emulators"
 tmpfolder="/third-party"
 
-mkdir -p "/emulators/rpi/emulators"
+mkdir -p $emulators
 
 if [[ ! -d "$tmpfolder/ps1" ]]; then
     echo "Downloading PS1 emulator code..."
@@ -13,7 +13,7 @@ else
 fi
 
 echo "Compiling PS1 emulator..."
-mkdir "$tmpfolder/ps1/build/"
+mkdir -p "$tmpfolder/ps1/build/"
 cd "$tmpfolder/ps1/build"
 cmake -DCMAKE_BUILD_TYPE=Release -GNinja "$tmpfolder/ps1/"
 ninja 
@@ -38,5 +38,5 @@ cmake -j 4 ..
 make install
 
 echo "Copying PSP emulator files to emulator folder..."
-mkdir "$emulators/psp"
+mkdir -p "$emulators/psp"
 cp "$tmpfolder/psp/build/PPSSPPSDL" "$emulators/psp/"

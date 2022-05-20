@@ -68,7 +68,7 @@ def openSubprocess(program, args, file, resolution, center=True):
     if resolution:
         window = subprocess.Popen(["/usr/bin/blackWindow.py"])
         os.system(
-            f"python3 /usr/bin/changeResolution.py -r {resolution}" + "-c" if center else "")
+            f"python3 /usr/bin/changeResolution.py -r {resolution}" + " -c" if center else "")
 
     subprocess.call(
         [program] + str(args).split(";") + [file])

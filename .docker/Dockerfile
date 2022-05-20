@@ -1,6 +1,6 @@
 FROM --platform=linux/arm64/v8 ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
+RUN apt update && \
     apt install -q -y --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
     git \
     libsdl2-dev \

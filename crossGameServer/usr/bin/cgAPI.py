@@ -97,11 +97,12 @@ def open_video():
 
 # SYSTEM
 CROSSGAMEMODE = "/tmp/crossgame.mode"
+SOUNDSFOLDER = config["PATH"]["sounds"]
 
 def restartx(controlFile):
     if os.path.isfile(controlFile):
         os.remove(controlFile)
-        playsound("/rpi/apptk/sounds/enter.wav")
+        playsound(f"{SOUNDSFOLDER}/enter.wav")
         return os.system("killall crossgame") == 0
     return False
 

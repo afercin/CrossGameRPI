@@ -1,19 +1,26 @@
 version: "3.9"
 
 services:
-    compiler:
+    packager:
+        container_name: crossgame.packager
         build: .
-        container_name: crossgame.compiler
-        ports:
-         - "8000:5000"
         volumes:
-         - ../release:/release
          - ./scripts:/scripts
+         - ../release:/release
          - ../.third-party:/third-party
-         - ../crossGameEmulators:/emulators
-         - ../crossGameServer:/server
+         - ../crossGameEmulators:/crossGameEmulators
+         - ../crossGameServer:/crossGameServer
         command: bash -c "
-            /scritps/emulators_compile.sh
-            dpkg-deb --build --root-owner-group /emulators
-            dpkg-deb --build --root-owner-group /server
-            mv *.dev /reselase/"
+            rm /release/* || true &&
+            /scripts/emulators_compile.sh &&
+            /scripts/build_packages.sh"
+    app-compiler:
+        container_name: crossgame.compiler
+        image: electronuserland/builder
+        working_dir: /app
+        volumes:
+         - /home/afercin/dev/CrossGameApp:/app
+         - ../release:/release
+        command: bash -c "
+            npm run dist_arm64 &&
+            cp ./dist/crossgame*arm64.deb /release"

@@ -24,12 +24,6 @@ done
 echo "Setting root password..."
 sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
 
-#Cambiar nombre de usuario
-echo "Setting up crossgame user"
-usermod -l "crossgame" -d "/home/cossgame" -m "ubuntu"
-mv "/home/ubuntu" "/home/crossgame"
-
-
 #Iniciar equipo sin gui
 systemctl set-default multi-user
 
