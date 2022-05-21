@@ -89,7 +89,7 @@ def launchGame(name, emulator):
             args = config[emulator.upper()]["args"]
 
             if not preferredExtension:
-                isoFile = game["isos"][0]
+                isoFile = game["files"][0]
             else:
                 isoFile = next(
                     iso for iso in game["files"] if preferredExtension in iso)
