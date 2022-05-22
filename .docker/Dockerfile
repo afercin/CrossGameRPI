@@ -21,4 +21,7 @@ RUN apt update && \
     build-essential \
     cmake \
     libgl1-mesa-dev \
-    libvulkan-dev
+    libvulkan-dev \
+    libspeexdsp-dev \
+    libsamplerate0-dev \
+    libboost-filesystem-dev

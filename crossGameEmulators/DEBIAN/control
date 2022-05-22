@@ -1,5 +1,5 @@
 Package: CrossGameEmulators
-Version: 0.2.3
+Version: 0.2.4
 Architecture: all
 Depends: libqt5gui5, libsdl2-dev
 Maintainer: Internal Pointers <info@internalpointers.com>

@@ -4,6 +4,7 @@ services:
     packager:
         container_name: crossgame.packager
         build: .
+        working_dir: /scripts
         volumes:
          - ./scripts:/scripts
          - ../release:/release
@@ -11,9 +12,11 @@ services:
          - ../crossGameEmulators:/crossGameEmulators
          - ../crossGameServer:/crossGameServer
         command: bash -c "
-            rm /release/* || true &&
-            /scripts/emulators_compile.sh &&
-            /scripts/build_packages.sh"
+            rm -r /release/* || true &&
+            ./n64_build.sh &&
+            ./ps1_build.sh &&
+            ./psp_build.sh &&
+            ./build_packages.sh"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder
