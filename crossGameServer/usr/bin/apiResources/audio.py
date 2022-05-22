@@ -1,5 +1,6 @@
 import subprocess
 import os
+from tabnanny import check
 
 
 def sinkList():
@@ -21,18 +22,19 @@ def sinkList():
 def setSink(sinkN): return os.system(f"pacmd set-default-sink {sinkN}") == 0
 
 
-def volumeUp(): return setVolume("5%+")
+def volumeUp(): return setVolume("5%+", True)
 
 
-def volumeDown(): return setVolume("5%-")
+def volumeDown(): return setVolume("5%-", True)
 
 
-def toogleAudio(): return setVolume("toggle")
+def toogleAudio(): return setVolume("toggle", True)
 
 
-def setVolume(volume):
+def setVolume(volume, checkHdmi=False):
     sinks = sinkList()
-    for i in range(0, len(sinks)):
-        if "alsa_output.platform-fef05700.hdmi.iec958-stereo" in sinks[f"{i}"]["name"] and sinks[f"{i}"]["active"]:
-            return False;
+    if checkHdmi:
+        for i in range(0, len(sinks)):
+            if "alsa_output.platform-fef05700.hdmi.iec958-stereo" in sinks[f"{i}"]["name"] and sinks[f"{i}"]["active"]:
+                return False
     return os.system(f"amixer -D pulse set Master {volume}") == 0
