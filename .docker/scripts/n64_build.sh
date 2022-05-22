@@ -8,7 +8,9 @@ EMULATOR="n64"
 DEST_FOLDER="${EMULATORS_FOLDER}/${EMULATOR}"
 CODE_FOLDER="${GIT_FOLDER}/${EMULATOR}"
 BUILD_FOLDER="${CODE_FOLDER}/build"
-LIB_FOLDER="/crossGameEmulators/usr/local"
+
+USR_FOLDER="/crossGameEmulators/usr/"
+LIB_FOLDER="${USR_FOLDER}/local"
 
 COMPONENTS="core rom ui-console audio-sdl input-sdl rsp-hle video-rice video-glide64mk2"
 GIT_ARGS=""
@@ -51,8 +53,13 @@ echo
 [[ -d "${DEST_FOLDER}" ]] && rm -r "${DEST_FOLDER}"
 mv "${BUILD_FOLDER}/bin" "${DEST_FOLDER}"
 
-echo "### Copying Mupen64Plus libraries to ${LIB_FOLDER}"
+echo "### Copying Mupen64Plus libraries to ${LIB_FOLDER}/lib"
 echo
 
 mkdir -p "${LIB_FOLDER}"
 cp -r "${BUILD_FOLDER}/lib" "${LIB_FOLDER}"
+
+echo "### Copying Mupen64Plus libraries to ${LIB_FOLDER}/share"
+echo
+
+cp -r "${BUILD_FOLDER}/share" "${USR_FOLDER}"
