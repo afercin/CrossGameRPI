@@ -163,5 +163,35 @@ def initialize():
     setVolume(str(config["DEFAULT"]["volume"]) + "%")
     return jsonify({"result": "success"})
 
+@app.route(f"{APIPATH}/system/bluetooth/devices", methods=["GET"])
+def get_bluetooth_devices():
+    devices=list()
+    for device in subprocess.check_output("bluetoothctl devices", shell=True, text=True).split("\n"):
+        if len(device) > 0:
+            _, mac, name = device.split(" ", 2)
+            devices.append({
+                "name": name,
+                "mac": mac
+            })
+    return jsonify(devices)
+
+@app.route(f"{APIPATH}/system/bluetooth/connect", methods=["GET"])
+def connect_device():
+    device = request.args["device"]
+    result = "success"
+    if os.system(f"bluetoothctl connect {device}") != 0:
+        result = "fail"
+    else:
+        os.system(f"bluetoothctl trust {device}")
+    return jsonify({"result": result})
+
+@app.route(f"{APIPATH}/system/bluetooth/disconnect", methods=["GET"])
+def disconnect_device():
+    device = request.args["device"]
+    result = "success"
+    if os.system(f"bluetoothctl disconnect {device}") != 0:
+        result = "fail"
+    return jsonify({"result": result})
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

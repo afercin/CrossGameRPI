@@ -102,16 +102,21 @@ class keyboardTranslator():
         self.log = logUtils(verbose=verbose)
 
     def sendKey(self, key):
-        if key == "+":
-            requests.request("GET", "http://localhost:5000/api/v1/system/audio/volume-up")
-        elif key == "-":
-            requests.request("GET", "http://localhost:5000/api/v1/system/audio/volume-down")
-        elif key == "mute":
-            requests.request("GET", "http://localhost:5000/api/v1/system/audio/toogle")
-        elif key == "powerOff":
+        if key == "powerOff":
             os.system("shutdown -f 0")
+        elif key == "+":
+            requests.get("http://localhost:5000/api/v1/system/audio/volume-up")
+        elif key == "-":
+            requests.get("http://localhost:5000/api/v1/system/audio/volume-down")
+        elif key == "mute":
+            requests.get("http://localhost:5000/api/v1/system/audio/toogle")
         elif key == "restartx":
-            requests.request("GET", "http://localhost:5000/api/v1/system/restartx")
+            requests.get("http://localhost:5000/api/v1/system/restartx")
+        elif key == "disconnect":
+            for device in requests.get("http://10.0.0.1:5000/api/v1/system/bluetooth/devices").json():
+                if device["name"] == "Wireless Controller":
+                    requests.get("http://localhost:5000/api/v1/system/bluetooth/disconnect?device=A0:AB:51:03:21:8F")
+                    break
         elif not os.path.isfile(EMULATORCONTROL):
             self.keyboard = Controller()
             self.keyboard.press(key)
@@ -120,8 +125,9 @@ class keyboardTranslator():
     def checkControllerKeyDown(self, keyDown):
         if self.controller.button[controller.PS] and self.controller.button[controller.SELECT]:
             self.sendKey("powerOff")
-        if self.controller.button[controller.SELECT] and self.controller.button[controller.START] or \
-           self.controller.button[controller.PS] and self.controller.doublePress:
+        elif self.controller.button[controller.SELECT] and self.controller.button[controller.START]:
+            self.sendKey("disconnect")        
+        elif self.controller.button[controller.PS] and self.controller.doublePress:
             self.sendKey("restartx")
         elif keyDown in DS4MAP.keys():
             self.sendKey(DS4MAP[keyDown])
