@@ -2,9 +2,6 @@
 ## Static vars
 SCRIPTNAME="automount"
 
-## Call to libgoran
-. /bin/libgoran
-
 ## Code
 vflag="true"
 SSD_UUID="842750cc-1a91-4d41-bc76-5ac415f92e4c"
@@ -25,13 +22,11 @@ while true; do
             if [[ $disk != "3E50-902A" ]] && [[ $disk != "378383c9-0612-4c82-9c07-8c34d15253ba" ]]; then
 
                 if [[ $disk == $SSD_UUID ]] && ! ls "/rpi/roms" > /dev/null 2>&1; then
-                    msgWarn "Folder /rpi/roms is not accesible!"
+                    echo "Folder /rpi/roms is not accesible!"
                     if mount $(getPartitionName $disk) "/rpi" > /dev/null; then
-                        msgOk "SSD partition mounted into /rpi!"
-                        ls /rpi > /dev/null 2>&1
-                        touch "/tmp/crossgame.ready"
+                        echo "SSD partition mounted into /rpi!"
                     else
-                        msgError "Cannot mount SSD partition"
+                        echo "Cannot mount SSD partition"
                     fi
                 fi
 
