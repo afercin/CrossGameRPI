@@ -116,11 +116,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-while [[ ! -f "/tmp/crossgame.ready" ]];do
-    echo "Waiting for ssd..."
-    sleep 0.5
-done
-
 ######## Check updates ########
 
 # apt instal /tmp/*.deb

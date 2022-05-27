@@ -7,4 +7,9 @@ else
     exit 1
 fi
 
+echo "Waiting for ssd..."
+while ! ls "/rpi/resources/" ;do
+    sleep 0.5
+done
+
 exit 0
