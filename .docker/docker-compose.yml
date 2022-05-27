@@ -10,6 +10,7 @@ services:
          - ../release:/release
          - ../.third-party:/third-party
          - ../crossGameEmulators:/crossGameEmulators
+         - ../crossGamePlymouth:/crossGamePlymouth
          - ../crossGameServer:/crossGameServer
         command: bash -c "
             rm -r /release/* || true &&

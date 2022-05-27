@@ -1,0 +1,4 @@
+#!/bin/bash
+
+update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/dotLock/dotLock.plymouth 100
+echo "2" | sudo update-alternatives --config default.plymouth
