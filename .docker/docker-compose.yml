@@ -9,6 +9,7 @@ services:
          - ./scripts:/scripts
          - ../release:/release
          - ../.third-party:/third-party
+         - ../crossGameConfBase:/crossGameConfBase
          - ../crossGameEmulators:/crossGameEmulators
          - ../crossGamePlymouth:/crossGamePlymouth
          - ../crossGameServer:/crossGameServer

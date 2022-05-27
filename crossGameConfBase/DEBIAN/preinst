@@ -1,0 +1,18 @@
+#!/bin/bash
+
+dirs=("/root/.ssh" "/etc/netplan" "/etc/samba" "/etc/ssh")
+files=("/home/crossgame/.bashrc" "/etc/ssh/sshd_conf" "/etc/samba/smb.conf")
+
+for dir in ${dirs[@]}; do
+    if [[ ! -d "$dir" ]]; then
+        echo "Creating '${dir}'..."
+        mkdir "$dir"
+    fi
+done
+
+for file in ${files[@]}; do
+    if [[ -f "${file}" ]]; then
+        echo "Creating '${file}' backup..."
+        cp "${file}" "${file}_backup"
+    fi
+done
