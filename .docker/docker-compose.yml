@@ -12,7 +12,7 @@ services:
          - ../crossGameConfBase:/crossGameConfBase
          - ../crossGameEmulators:/crossGameEmulators
          - ../crossGamePlymouth:/crossGamePlymouth
-         - ../crossGameServer:/crossGameServer
+         - ../crossGameUtils:/crossGameUtils
         command: bash -c "
             rm -r /release/* || true &&
             ./n64_build.sh &&

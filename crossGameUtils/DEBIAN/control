@@ -1,4 +1,4 @@
-Package: CrossGameServer
+Package: CrossGameUtils
 Version: 0.2.5
 Architecture: all
 Depends: python3, python3-pip, rpi.gpio-common, python3-rpi.gpio, python3-flask, python3-tk
