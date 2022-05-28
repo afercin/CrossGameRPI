@@ -32,7 +32,7 @@ sudo systemctl set-default multi-user
 
 #Habilitar servicios
 echo "Setting up automount service..."
-v systemctl daemon-reload
+sudo systemctl daemon-reload
 sudo systemctl enable automount.service
 sudo systemctl start automount.service
 
@@ -74,7 +74,7 @@ sudo systemctl disable smbd.service
 
 #Installar netdata
 echo "Installing netdata..."
-if [[ ! -d "/var/lib/netdata" ]]; then
+if [[ ! -d "/opt/netdata" ]]; then
     bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
 else
     echo "Netdata is already installed"
