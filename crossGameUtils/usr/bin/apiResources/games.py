@@ -4,7 +4,7 @@ import subprocess
 
 CONFFILE = "/etc/productConf/cg.conf"
 if "dev" in os.path.abspath(os.getcwd()):
-    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameServer" + CONFFILE
+    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + CONFFILE
 
 config = configparser.ConfigParser()
 config.read(CONFFILE)
@@ -12,7 +12,7 @@ config.read(CONFFILE)
 ROMSPATH = config["PATH"]["roms"]
 IMAGEPATH = config["PATH"]["images"]
 
-EMULATORCONTROL = "/tmp/emulator.mode"
+EMULATORCONTROL = config["CONTROL"]["emulator"]
 
 
 def getFilesByPath(startPath):

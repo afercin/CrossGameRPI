@@ -8,7 +8,7 @@ import os
 
 CONFFILE = "/etc/productConf/cg.conf"
 if "dev" in os.path.abspath(os.getcwd()):
-    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameServer" + CONFFILE
+    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + CONFFILE
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ config.read(CONFFILE)
 APIPATH = config["PATH"]["api"]
 
 # GAMES
-EMULATORCONTROL = "/tmp/emulator.mode"
+EMULATORCONTROL = config["CONTROL"]["emulator"]
 
 
 @app.route(f"{APIPATH}/games", methods=["GET"])
@@ -58,7 +58,7 @@ def set_iconset():
 
 # VIDEOS
 VIDEOPATH = config["PATH"]["videos"]
-VIDEOCONTROL = "/tmp/video.mode"
+VIDEOCONTROL = config["CONTROL"]["video"]
 
 
 @app.route(f"{APIPATH}/videos", methods=["GET"])
@@ -96,7 +96,7 @@ def open_video():
 
 
 # SYSTEM
-CROSSGAMEMODE = "/tmp/crossgame.mode"
+CROSSGAMEMODE = config["CONTROL"]["crossgame"]
 SOUNDSFOLDER = config["PATH"]["sounds"]
 
 def restartx(controlFile):
