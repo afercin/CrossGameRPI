@@ -24,11 +24,8 @@ class tvHandler:
         self.config.read(CONFFILE)
 
         self.updateChannels()
-        self.driver = self.getDriver()
-
-        self.atresplayer = atresplayerTV(self.driver)
-        self.mitele = miteleTV(self.driver)
-        self.rtve = rtveTV(self.driver)
+        self.driver = None
+        self.currentChannel = 0
 
     def getDriver(self):
         chrome_options = webdriver.ChromeOptions()
@@ -61,12 +58,37 @@ class tvHandler:
             json.dump(localList, f)
 
     def close(self):
-        self.driver.close()
+        value = True
+        try:
+            self.driver.close()
+            self.driver =  None
+        except:
+            value = False
+        return value
+
+    def channelDown(self):
+        self.currentChannel -= 1
+        if self.currentChannel < 1:
+            self.currentChannel = len(self.channels)
+        return self.setChannel(self.currentChannel)
+
+    def channelUp(self):
+        self.currentChannel += 1
+        if self.currentChannel > len(self.channels):
+            self.currentChannel = 1
+        return self.setChannel(self.currentChannel)
 
     def setChannel(self, number):
         if number > len(self.channels):
-            return
+            return False
 
+        if self.driver == None:
+            self.driver = self.getDriver()
+            self.atresplayer = atresplayerTV(self.driver)
+            self.mitele = miteleTV(self.driver)
+            self.rtve = rtveTV(self.driver)
+
+        self.currentChannel = number
         url = self.channels[number-1]["url"]
 
         if "atresplayer" in url:
@@ -77,3 +99,5 @@ class tvHandler:
             self.rtve.setChannel(url)
         else:
             self.driver.get(url)
+            
+        return True

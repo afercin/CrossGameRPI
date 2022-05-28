@@ -4,6 +4,7 @@ import configparser
 from apiResources.audio import *
 from apiResources.games import *
 from playsound import playsound
+from tvHandler import tvHandler
 import os
 
 CONFFILE = "/etc/productConf/cg.conf"
@@ -11,11 +12,41 @@ if "dev" in os.path.abspath(os.getcwd()):
     CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + CONFFILE
 
 app = Flask(__name__)
+tv = tvHandler()
 
 config = configparser.ConfigParser()
 config.read(CONFFILE)
 
 APIPATH = config["PATH"]["api"]
+
+# TV
+TVCONTROL = config["CONTROL"]["tv"]
+
+
+@app.route(f"{APIPATH}/tv/channels", methods=["GET"])
+def get_channels(): return jsonify(tv.channels)
+
+
+@app.route(f"{APIPATH}/tv/channel", methods=["GET"])
+def set_channel():
+    number = request.args["number"]
+    return jsonify({"result": "success" if tv.setChannel(int(number)) else "fail"})
+
+
+@app.route(f"{APIPATH}/tv/channel-down", methods=["GET"])
+def set_channelDown():
+    return jsonify({"result": "success" if tv.channelDown() else "fail"})
+
+
+@app.route(f"{APIPATH}/tv/channel-up", methods=["GET"])
+def set_channelUp():
+    return jsonify({"result": "success" if tv.channelUp() else "fail"})
+
+
+@app.route(f"{APIPATH}/tv/power-off", methods=["GET"])
+def tv_powerOff():
+    return jsonify({"result": "success" if tv.close() else "fail"})
+
 
 # GAMES
 EMULATORCONTROL = config["CONTROL"]["emulator"]
@@ -99,12 +130,14 @@ def open_video():
 CROSSGAMEMODE = config["CONTROL"]["crossgame"]
 SOUNDSFOLDER = config["PATH"]["sounds"]
 
+
 def restartx(controlFile):
     if os.path.isfile(controlFile):
         os.remove(controlFile)
         playsound(f"{SOUNDSFOLDER}/enter.wav")
         return os.system("killall crossgameapp") == 0
     return False
+
 
 @app.route(f"{APIPATH}/system/restartx", methods=["GET"])
 def close():
@@ -113,7 +146,7 @@ def close():
         mode = f.read()
         if mode == "videos" and restartx(VIDEOCONTROL) or mode == "games" and restartx(EMULATORCONTROL):
             result = "success"
-    
+
     return jsonify({"result": result})
 
 
@@ -163,9 +196,10 @@ def initialize():
     setVolume(str(config["DEFAULT"]["volume"]) + "%")
     return jsonify({"result": "success"})
 
+
 @app.route(f"{APIPATH}/system/bluetooth/devices", methods=["GET"])
 def get_bluetooth_devices():
-    devices=list()
+    devices = list()
     for device in subprocess.check_output("bluetoothctl devices", shell=True, text=True).split("\n"):
         if len(device) > 0:
             _, mac, name = device.split(" ", 2)
@@ -174,6 +208,7 @@ def get_bluetooth_devices():
                 "mac": mac
             })
     return jsonify(devices)
+
 
 @app.route(f"{APIPATH}/system/bluetooth/connect", methods=["GET"])
 def connect_device():
@@ -185,6 +220,7 @@ def connect_device():
         os.system(f"bluetoothctl trust {device}")
     return jsonify({"result": result})
 
+
 @app.route(f"{APIPATH}/system/bluetooth/disconnect", methods=["GET"])
 def disconnect_device():
     device = request.args["device"]
@@ -192,6 +228,7 @@ def disconnect_device():
     if os.system(f"bluetoothctl disconnect {device}") != 0:
         result = "fail"
     return jsonify({"result": result})
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
