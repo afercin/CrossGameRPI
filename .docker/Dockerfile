@@ -1,4 +1,6 @@
-FROM --platform=linux/arm64/v8 ubuntu:22.04
+#sudo apt-get install qemu binfmt-support qemu-user-static
+FROM --platform=linux/arm64/v8 ubuntu:22.04 
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -q -y --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
