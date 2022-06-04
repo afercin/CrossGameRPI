@@ -1,5 +1,4 @@
 from tv.baseTV import *
-import pyautogui
 COOKIES = "//button[contains(@id, 'onetrust-accept')]"
 READY = "//div[contains(@class, 'vjs-playing')]"
 
@@ -17,7 +16,6 @@ class rtveTV(tv):
     def setChannel(self, url):
         super().setChannel(url)
 
-        self.clickElement(CONTROL_BAR)
         self.clickElement(VOLUME_MUTED)
         self.clickElement(FULL_SCREEN_BUTTON)
 

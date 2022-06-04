@@ -1,5 +1,4 @@
 from tv.baseTV import *
-import pyautogui
 COOKIES = "//span[text()='Aceptar']/parent::button"
 READY = "//ins[@data-ad-status='unfilled']"
 

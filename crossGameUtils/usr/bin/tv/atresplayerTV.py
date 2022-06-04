@@ -1,5 +1,4 @@
 from tv.baseTV import *
-import pyautogui
 COOKIES = "//a[contains(text(), 'ACEPTAR Y CERRAR')]"
 READY = "//div[@id='root']"
 

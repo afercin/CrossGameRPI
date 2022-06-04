@@ -1,7 +1,5 @@
 # /bin/python3
 
-# apt install chromium-chromedriver
-
 from selenium import webdriver
 from tv.atresplayerTV import atresplayerTV
 from tv.miteleTV import miteleTV
@@ -62,6 +60,7 @@ class tvHandler:
         try:
             self.driver.close()
             self.driver =  None
+            os.remove(self.config['CONTROL']['tv'])
         except:
             value = False
         return value
@@ -83,6 +82,7 @@ class tvHandler:
             return False
 
         if self.driver == None:
+            os.system(f"touch {self.config['CONTROL']['tv']}")
             self.driver = self.getDriver()
             self.atresplayer = atresplayerTV(self.driver)
             self.mitele = miteleTV(self.driver)

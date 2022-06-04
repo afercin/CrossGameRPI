@@ -1,9 +1,7 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+import pyautogui
 import time
 
 
@@ -47,6 +45,7 @@ class tv:
     def setChannel(self, url):
         done = False
         times = 0
+        pyautogui.moveTo(960, 540)
         while times < 3 and not done:
             print(f"[INFO] Setting url: {url}")
             try:

@@ -1,11 +1,17 @@
-import os
 from pynput.keyboard import Controller, Key
 from irDeconder import irDecoder
 from controllerHook import *
-from logUtils import logUtils
+import configparser
 import requests
+import os
 
-EMULATORCONTROL = "/tmp/emulator.mode"
+CONFFILE = "/etc/productConf/cg.conf"
+IP = "localhost"
+if "dev" in os.path.abspath(os.getcwd()):
+    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + CONFFILE
+    IP = "10.0.0.20"
+
+APIPATH = f"http://{IP}:5000/api/v1"
 
 DS4MAP = {
     controller.A: Key.enter,
@@ -32,31 +38,31 @@ DS4MAP = {
 }
 
 IRMAP = {
-    #"TVPowerReleased": "TVPowerReleased",
-    #"TVSourceReleased": "TVSourceReleased",
-    #"TVVolumeUpReleased": "TVVolumeUpReleased",
-    #"TVVolumeDownReleased": "TVVolumeDownReleased",
-    #"TVMuteReleased": "TVMuteReleased",
-    #"TVPower": "TVPower",
+    # "TVPowerReleased": "TVPowerReleased",
+    # "TVSourceReleased": "TVSourceReleased",
+    # "TVVolumeUpReleased": "TVVolumeUpReleased",
+    # "TVVolumeDownReleased": "TVVolumeDownReleased",
+    # "TVMuteReleased": "TVMuteReleased",
+    # "TVPower": "TVPower",
     "TIVO": "q",
     "Left": "a",
     "Up": "w",
     "Right": "d",
     "Down": "s",
     "Ok": Key.enter,
-    #"TVSource": "TVSource",
-    #"Language": "Language",
-    #"Zoom": "Zoom",
-    #"Guide": Key.home,
-    #"Info": Key.end,
-    #"ShowTV": "ShowTV",
+    # "TVSource": "TVSource",
+    # "Language": "Language",
+    # "Zoom": "Zoom",
+    # "Guide": Key.home,
+    # "Info": Key.end,
+    # "ShowTV": "ShowTV",
 
     "TVVolumeUp": "+",
     "TVVolumeDown": "-",
     "TVMute": "mute",
 
-    #"ProgUp": Key.page_up,
-    #"ProgDown": Key.page_down,
+    # "ProgUp": Key.page_up,
+    # "ProgDown": Key.page_down,
     # "Dislike": "Dislike",
     # "Rec": "Rec",
     # "Like": "Like",
@@ -91,33 +97,33 @@ IRMAP = {
 
 class keyboardTranslator():
 
-    def __init__(self, verbose=False):
+    def __init__(self):
+        self.config = configparser.ConfigParser()
+        self.config.read(CONFFILE)
 
-        self.controller = controllerHook(inactivityTime=15, verbose=True)
+        self.controller = controllerHook(inactivityTime=self.config["DEFAULT"]["controllerInactivityTime"], verbose=True)
         self.controller.onKeyDown(self.checkControllerKeyDown)
 
-        self.decoder = irDecoder(pin=12)
+        self.decoder = irDecoder(pin=int(self.config["DEFAULT"]["irPin"]))
         self.decoder.onDataReceived(self.checkDecoderDataReceived)
-
-        self.log = logUtils(verbose=verbose)
 
     def sendKey(self, key):
         if key == "powerOff":
             os.system("shutdown -f 0")
         elif key == "+":
-            requests.get("http://localhost:5000/api/v1/system/audio/volume-up")
+            requests.get(f"{APIPATH}/system/audio/volume-up")
         elif key == "-":
-            requests.get("http://localhost:5000/api/v1/system/audio/volume-down")
+            requests.get(f"{APIPATH}/system/audio/volume-down")
         elif key == "mute":
-            requests.get("http://localhost:5000/api/v1/system/audio/toogle")
+            requests.get(f"{APIPATH}/system/audio/toogle")
         elif key == "restartx":
-            requests.get("http://localhost:5000/api/v1/system/restartx")
+            requests.get(f"{APIPATH}/system/restartx")
         elif key == "disconnect":
-            for device in requests.get("http://10.0.0.1:5000/api/v1/system/bluetooth/devices").json():
+            for device in requests.get(f"{APIPATH}/system/bluetooth/devices").json():
                 if device["name"] == "Wireless Controller":
-                    requests.get("http://localhost:5000/api/v1/system/bluetooth/disconnect?device=A0:AB:51:03:21:8F")
+                    requests.get(f"{APIPATH}/system/bluetooth/disconnect?device=A0:AB:51:03:21:8F")
                     break
-        elif not os.path.isfile(EMULATORCONTROL):
+        elif not os.path.isfile(self.config["CONTROL"]["emulator"]):
             self.keyboard = Controller()
             self.keyboard.press(key)
             self.keyboard.release(key)
@@ -126,7 +132,7 @@ class keyboardTranslator():
         if self.controller.button[controller.PS] and self.controller.button[controller.SELECT]:
             self.sendKey("powerOff")
         elif self.controller.button[controller.SELECT] and self.controller.button[controller.START]:
-            self.sendKey("disconnect")        
+            self.sendKey("disconnect")
         elif self.controller.button[controller.PS] and self.controller.doublePress:
             self.sendKey("restartx")
         elif keyDown in DS4MAP.keys():
@@ -137,7 +143,18 @@ class keyboardTranslator():
             self.sendKey("powerOff")
         elif keyDown == "Back":
             self.sendKey("restartx")
-            self.sendKey("Q")
+            self.sendKey("Q")        
+        elif os.path.isfile(self.config["CONTROL"]["tv"]):
+            if keyDown == "ProgUp":
+                requests.get(f"{APIPATH}/tv/channel-up")
+            elif keyDown == "ProgDown":
+                requests.get(f"{APIPATH}/tv/channel-down")
+            else:
+                try:
+                    keyDown = int(keyDown)
+                    requests.get(f"{APIPATH}/tv/channel?number={keyDown}")
+                except:
+                    pass
         elif keyDown in IRMAP.keys():
             self.sendKey(IRMAP[keyDown])
 
@@ -153,5 +170,5 @@ class keyboardTranslator():
 
 
 if __name__ == "__main__":
-    a = keyboardTranslator(verbose=True)
+    a = keyboardTranslator()
     a.start()

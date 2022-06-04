@@ -127,7 +127,7 @@ def open_video():
 
 
 # SYSTEM
-CROSSGAMEMODE = config["CONTROL"]["crossgame"]
+CROSSGAMEMODE = config["PATH"]["mode"]
 SOUNDSFOLDER = config["PATH"]["sounds"]
 
 
@@ -144,7 +144,9 @@ def close():
     result = "fail"
     with open(CROSSGAMEMODE) as f:
         mode = f.read()
-        if mode == "videos" and restartx(VIDEOCONTROL) or mode == "games" and restartx(EMULATORCONTROL):
+        if mode == "videos" and restartx(VIDEOCONTROL) or \
+           mode == "games" and restartx(EMULATORCONTROL) or \
+           mode == "tv" and restartx(TVCONTROL):
             result = "success"
 
     return jsonify({"result": result})
@@ -186,11 +188,9 @@ def get_crossgame_mode():
 
 @app.route(f"{APIPATH}/system/initialize", methods=["GET"])
 def initialize():
-    if os.path.isfile(EMULATORCONTROL):
-        os.remove(EMULATORCONTROL)
-
-    if os.path.isfile(VIDEOCONTROL):
-        os.remove(VIDEOCONTROL)
+    for controlFile in config["CONTROL"]:
+        if os.path.isfile(controlFile):
+            os.remove(controlFile)
 
     setSink(config["DEFAULT"]["sink"])
     setVolume(str(config["DEFAULT"]["volume"]) + "%")
