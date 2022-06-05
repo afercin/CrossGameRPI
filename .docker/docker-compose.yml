@@ -14,11 +14,13 @@ services:
          - ../crossGamePlymouth:/crossGamePlymouth
          - ../crossGameUtils:/crossGameUtils
         command: bash -c "
-            rm -r /release/* || true &&
-            ./n64_build.sh &&
-            ./ps1_build.sh &&
-            ./psp_build.sh &&
-            ./build_packages.sh"
+            rm -r /release/* || true
+            && rm -r /crossGameEmulators/rpi/emulators || true
+            && mkdir -p /crossGameEmulators/rpi/emulators
+            && ./n64_build.sh
+            && ./ps1_build.sh
+            && ./psp_build.sh
+            && ./build_packages.sh"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder
@@ -27,6 +29,6 @@ services:
          - /home/afercin/dev/CrossGameApp:/app
          - ../release:/release
         command: bash -c "
-            npm run dist_arm64 &&
-            cp ./dist/crossgame*arm64.deb /release &&
-            rm -r ./dist ./release"
+            npm run dist_arm64
+            && cp ./dist/crossgame*arm64.deb /release
+            && rm -r ./dist ./release"

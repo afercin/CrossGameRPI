@@ -30,7 +30,7 @@ for component in ${COMPONENTS}; do
     
     if [[ ! -d "${COMPONENT_FOLDER}" ]]; then
         echo " ### Downloading ${component} code..."
-        git clone "https://github.com/mupen64plus/${component}.git" "${COMPONENT_FOLDER}"
+        git clone "https://github.com/mupen64plus/${component}.git" ${GIT_ARGS} "${COMPONENT_FOLDER}"
     else
         cd "${COMPONENT_FOLDER}"
         echo "### Pulling  ${component} code..."

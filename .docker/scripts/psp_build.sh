@@ -21,7 +21,7 @@ echo
 
 if [[ ! -d "${CODE_FOLDER}" ]]; then
     echo "### Downloading PPSSPP code..."
-    git clone "${GIT_REPOSITORY}" "${GIT_ARGS}" "${CODE_FOLDER}"
+    git clone "${GIT_REPOSITORY}" ${GIT_ARGS} "${CODE_FOLDER}"
 else
     cd "${CODE_FOLDER}"
     echo "### Pulling PPSSPP code..."
