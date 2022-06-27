@@ -1,5 +1,11 @@
-Package: CrossGameConfBase
-Version: 0.2.6
+Source: crossgame-conf-base
+Section: admin
+Priority: extra
+Maintainer: Adrián Fernández Cintado <afercin@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.8.4
+
+Package: crossgame-conf-base
 Architecture: all
 Depends: crossgameemulators, crossgameapp, crossgameutils, crossgameplymouth,
  xinit, x11-xserver-utils, ifupdown, xserver-common, xserver-xorg-core,

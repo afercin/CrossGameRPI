@@ -1,0 +1,7 @@
+etc/
+source/ /usr/bin
+
+config/.bashrc /home/crossgame
+config/.xinitrc /home/crossgame
+config/authorized_keys /home/crossgame/.ssh
+config/authorized_keys /root/.ssh
