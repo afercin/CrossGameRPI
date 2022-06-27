@@ -1,7 +1,7 @@
 #!/bin/bash
 
-[[ ! -f ./common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
-. ./common.sh
+[[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
+. ./build_scripts/common.sh
 
 ## Variables
 EMULATOR="n64"
@@ -9,7 +9,7 @@ DEST_FOLDER="${EMULATORS_FOLDER}/${EMULATOR}"
 CODE_FOLDER="${GIT_FOLDER}/${EMULATOR}"
 BUILD_FOLDER="${CODE_FOLDER}/build"
 
-USR_FOLDER="/crossGameEmulators/usr/"
+USR_FOLDER="/emulators/usr/"
 LIB_FOLDER="${USR_FOLDER}/local"
 
 COMPONENTS="core rom ui-console audio-sdl input-sdl rsp-hle video-rice video-glide64mk2"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-[[ ! -f ./common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
-. ./common.sh
+[[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
+. ./build_scripts/common.sh
 
 ## Variables
 EMULATOR="psp"

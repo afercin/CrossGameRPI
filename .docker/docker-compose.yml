@@ -7,21 +7,17 @@ services:
         build: .
         working_dir: /scripts
         volumes:
-         - ./scripts:/scripts
          - ../release:/release
-         - ../.third-party:/third-party
-         - ../crossGameConfBase:/crossGameConfBase
-         - ../crossGameEmulators:/crossGameEmulators
+         - ../confBase:/confBase
+         - ../emulators:/emulators
          - ../crossGamePlymouth:/crossGamePlymouth
          - ../crossGameUtils:/crossGameUtils
         command: bash -c "
             rm -r /release/* || true
-            && rm -r /crossGameEmulators/rpi/emulators || true
-            && mkdir -p /crossGameEmulators/rpi/emulators
-            && ./n64_build.sh
-            && ./ps1_build.sh
-            && ./psp_build.sh
-            && ./build_packages.sh"
+            && cd /confBase
+            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && cd /emulators
+            && dpkg-buildpackage -rfakeroot -b -us -uc"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder

@@ -1,0 +1,12 @@
+Source: crossgame-emulators
+Section: admin
+Priority: extra
+Maintainer: Adrián Fernández Cintado <afercin@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.8.4
+
+Package: crossgame-emulators
+Architecture: all
+Depends: libqt5gui5, libsdl2-dev
+Maintainer: Internal Pointers <info@internalpointers.com>
+Description: CrossGame emulators compatibility

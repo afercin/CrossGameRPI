@@ -7,7 +7,7 @@ Standards-Version: 3.8.4
 
 Package: crossgame-conf-base
 Architecture: all
-Depends: crossgameemulators, crossgameapp, crossgameutils, crossgameplymouth,
+Depends: crossgame-emulators, crossgameapp, crossgame-utils, crossgame-plymouth,
  xinit, x11-xserver-utils, ifupdown, xserver-common, xserver-xorg-core,
  xserver-xorg-legacy, xterm, wget, net-tools, pulseaudio, 
  ssh, bluetooth, curl, vlc

@@ -1,3 +1,4 @@
+#!/bin/bash
 #Crear carpetas usadas por el sistema
 dirs=("/root/.ssh" "/etc/netplan" "/etc/samba" "/etc/ssh" "/etc/productConf" "/var/log/product" "/rpi" "/usr/share/server")
  
