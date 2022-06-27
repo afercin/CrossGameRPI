@@ -1,17 +1,4 @@
 #!/bin/bash
-#Crear carpetas usadas por el sistema
-dirs=("/etc/productConf" "/var/log/product" "/rpi" "/usr/share/server")
-
-for dir in ${dirs[@]}; do
-    if [[ ! -d "$dir" ]]; then
-        echo "Creating '$dir'..."
-        mkdir "$dir"
-    fi
-done
-
-sudo chmod 777 "/etc/productConf"
-sudo chmod 777 "/var/log/product"
-sudo chown crossgame:adrix "/rpi"
 
 #Añadir privilegios de ejecución para los scripts
 scripts=("restartx" "automount" "restorepoint")
@@ -23,18 +10,6 @@ done
 #Establecer contraseña root
 echo "Setting root password..."
 sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
-
-#Iniciar equipo sin gui
-sudo systemctl set-default multi-user
-
-#Deshabilitar apagado automático
-#systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-
-#Habilitar servicios
-echo "Setting up automount service..."
-sudo systemctl daemon-reload
-sudo systemctl enable automount.service
-sudo systemctl start automount.service
 
 echo "Setting up rc-local service..."
 chmod u+x "/etc/rc.local"
@@ -79,3 +54,7 @@ if [[ ! -d "/opt/netdata" ]]; then
 else
     echo "Netdata is already installed"
 fi
+
+#update /boot/config.txt
+sed -i "s/#disable_overscan=1/disable_overscan=1/g" /boot/config.txt
+echo "gpu_mem=256" >> /boot/config.txt

@@ -1,14 +1,35 @@
-#!/bin/bash
-
-dirs=("/root/.ssh" "/etc/netplan" "/etc/samba" "/etc/ssh")
-files=("/home/crossgame/.bashrc" "/etc/ssh/sshd_conf" "/etc/samba/smb.conf")
-
+#Crear carpetas usadas por el sistema
+dirs=("/root/.ssh" "/etc/netplan" "/etc/samba" "/etc/ssh" "/etc/productConf" "/var/log/product" "/rpi" "/usr/share/server")
+ 
 for dir in ${dirs[@]}; do
-    if [[ ! -d "$dir" ]]; then
+    if [[ ! -d "${dir}" ]]; then
         echo "Creating '${dir}'..."
-        mkdir "$dir"
+        mkdir "${dir}"
     fi
 done
+ 
+sudo chmod 777 "/etc/productConf"
+sudo chmod 777 "/var/log/product"
+
+if ls /dev/sda1 > /dev/null 2>&1; then
+    uuid=$(blkid /dev/sda1 | tr " " "\n" | grep "UUID" | head -1 | cut -d '"' -f2)
+    if ! grep -q $uuid /etc/fstab; then
+        echo "UUID=${uuid}     /rpi   auto    rw,user,auto    0    0" >> /etc/fstab
+    fi
+
+    if [[ "$(ls -A /rpi > /dev/null)" ]]; then
+        mkdir /tmp/data
+        mv /rpi/* /tmp/data
+    fi
+
+    if mount -a; then
+        chown -R pi:pi /rpi
+        mv /tmp/data/* /rpi || :
+    fi
+fi
+
+#Realizar Backup de los archivos del sistema
+files=("/home/crossgame/.bashrc" "/etc/ssh/sshd_conf" "/etc/samba/smb.conf")
 
 for file in ${files[@]}; do
     if [[ -f "${file}" ]]; then

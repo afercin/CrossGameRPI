@@ -2,7 +2,8 @@ Package: CrossGameConfBase
 Version: 0.2.5
 Architecture: all
 Depends: crossgameemulators, crossgameapp, crossgameutils, crossgameplymouth,
- xserver-xorg-video-dummy, xserver-xorg-input-kbd, xinit, x11-xserver-utils, 
- ssh, samba, bluetooth, alsa-utils, curl, vlc
+ xinit, x11-xserver-utils, ifupdown, xserver-common, xserver-xorg-core,
+ xserver-xorg-legacy, xterm, wget, net-tools, pulseaudio, 
+ ssh, bluetooth, curl, vlc
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: CrossGame conf base
