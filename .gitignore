@@ -6,3 +6,11 @@ release
 rpi
 crossGameEmulators/usr/share
 crossGameEmulators/usr/local
+
+*.changes
+*.buildinfo
+*debhelper*
+*.substvars
+files
+
+*/debian/crossgame-conf-base
