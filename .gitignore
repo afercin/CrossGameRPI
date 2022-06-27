@@ -2,10 +2,11 @@
 *deb
 .vscode
 release
-.third-party
-rpi
-crossGameEmulators/usr/share
-crossGameEmulators/usr/local
+
+emulators/.third-party
+emulators/rpi
+emulators/usr/share
+emulators/usr/local
 
 *.changes
 *.buildinfo
@@ -14,3 +15,6 @@ crossGameEmulators/usr/local
 files
 
 */debian/crossgame-conf-base
+*/debian/crossgame-emulators
+*/debian/crossgame-plymouth
+*/debian/crossgame-utils

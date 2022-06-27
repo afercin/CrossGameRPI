@@ -1,0 +1,12 @@
+Source: crossgame-utils
+Section: admin
+Priority: extra
+Maintainer: Adrián Fernández Cintado <afercin@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.8.4s
+
+Package: crossgame-utils
+Architecture: all
+Depends: python3, python3-pip, rpi.gpio-common, python3-rpi.gpio, python3-flask, python3-tk, chromium-chromedriver
+Maintainer: Internal Pointers <info@internalpointers.com>
+Description: CrossGame utils and services

@@ -10,14 +10,19 @@ services:
          - ../release:/release
          - ../confBase:/confBase
          - ../emulators:/emulators
-         - ../crossGamePlymouth:/crossGamePlymouth
-         - ../crossGameUtils:/crossGameUtils
+         - ../plymouth:/plymouth
+         - ../utils:/utils
         command: bash -c "
             rm -r /release/* || true
+            && cd /emulators
+            && dpkg-buildpackage -rfakeroot -b -us -uc
             && cd /confBase
             && dpkg-buildpackage -rfakeroot -b -us -uc
-            && cd /emulators
-            && dpkg-buildpackage -rfakeroot -b -us -uc"
+            && cd /utils
+            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && cd /plymouth
+            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && mv /*.deb /release"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder

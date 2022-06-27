@@ -4,5 +4,5 @@ pythonDependencies=("screeninfo" "ds4drv" "pygame" "pynput" "playsound" "seleniu
 
 for dependency in ${pythonDependencies[@]}; do
     echo "Installing $dependency"
-    pip install $dependency
+    pip3 install $dependency
 done 
