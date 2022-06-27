@@ -23,7 +23,7 @@ if ls /dev/sda1 > /dev/null 2>&1; then
     fi
 
     if mount -a; then
-        chown -R pi:pi /rpi
+        chown -R crossgame:crossgame /rpi
         mv /tmp/data/* /rpi || :
     fi
 fi

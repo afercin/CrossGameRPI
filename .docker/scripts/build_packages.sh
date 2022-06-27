@@ -1,7 +1,7 @@
 #!/bin/bash
 
-chmod 775 ./*/DEBIAN
-chmod 775 ./*/DEBIAN/*
+chmod 775 /*/DEBIAN
+chmod 775 /*/DEBIAN/*
 
 cd /
 

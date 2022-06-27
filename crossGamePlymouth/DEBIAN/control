@@ -1,5 +1,5 @@
 Package: CrossGamePlymouth
-Version: 0.2.5
+Version: 0.2.6
 Architecture: all
 Depends: plymouth, plymouth-themes
 Maintainer: Internal Pointers <info@internalpointers.com>

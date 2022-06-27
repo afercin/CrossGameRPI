@@ -46,5 +46,5 @@ echo
 echo "### Copying PPSSPP binaries to ${DEST_FOLDER}"
 echo
 
-mkdir -p "$emulators/psp"
+mkdir -p "${DEST_FOLDER}"
 cp -r "${CODE_FOLDER}/assets" "${BUILD_FOLDER}/PPSSPPSDL" "${DEST_FOLDER}"
