@@ -1,9 +1,9 @@
 #sudo apt-get install qemu binfmt-support qemu-user-static
-FROM --platform=linux/arm64/v8 ubuntu:22.04 
+FROM --platform=linux/arm64/v8 ubuntu:20.04 
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && \
-    apt install -q -y --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
+RUN apt-get update && \
+    apt-get install -q -y --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
     git \
     libsdl2-dev \
     libxrandr-dev \

@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
     packager:
-        container_name: crossgame.packager
+        container_name: crossgame.packager.ubuntu:20.04
         build: .
         working_dir: /scripts
         volumes:
