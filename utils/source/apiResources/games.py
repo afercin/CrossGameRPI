@@ -82,7 +82,6 @@ def launchGame(name, emulator):
     for game in getGamesByEmulator(emulator):
         if name in game["name"]:
 
-            emulatorsPath = config["PATH"]["emulators"]
             emulatorName = config[emulator.upper()]["emulatorName"]
             preferredExtension = config[emulator.upper()]["preferredExtension"]
             resolution = config[emulator.upper()]["resolution"]
@@ -97,7 +96,7 @@ def launchGame(name, emulator):
             with open(EMULATORCONTROL, "w") as f:
                 f.write(emulatorName)
             
-            openSubprocess(program=f"{emulatorsPath}/{emulator}/{emulatorName}",
+            openSubprocess(program=emulatorName,
                            args=args,
                            file=isoFile,
                            resolution=resolution)

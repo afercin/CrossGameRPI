@@ -1,5 +1,5 @@
 #sudo apt-get install qemu binfmt-support qemu-user-static
-FROM --platform=linux/arm64/v8 ubuntu:20.04 
+FROM --platform=linux/arm64/v8 ubuntu:22.04 
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -7,9 +7,23 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y \
     git \
-    debhelper
+    debhelper \
+    cmake
 
-RUN apt-get install -q -y --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
+# Mupen64plus dependencies
+RUN apt-get install -y \
+    libpng-dev \
+    libfreetype-dev \
+    nasm \
+    build-essential \
+    libz-dev \
+    libsdl2-dev \
+    libboost-dev \
+    libboost-filesystem-dev
+
+# Duckstation dependencies
+RUN apt-get install -y \
+    libsdl2-dev \
     libxrandr-dev \
     pkg-config \
     qtbase5-dev \
@@ -23,21 +37,12 @@ RUN apt-get install -q -y --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Op
     libcurl4-gnutls-dev \
     libgbm-dev \
     libdrm-dev \
-    ninja-build \
+    ninja-build
+
+#PPSSPP dependencies
+RUN apt-get install -y \
     build-essential \
-    cmake \
     libgl1-mesa-dev \
     libvulkan-dev \
     libspeexdsp-dev \
     libsamplerate0-dev
-
-# Mupen64plus dependencies
-RUN apt-get install -y \
-    libpng-dev \
-    libfreetype-dev \
-    nasm \
-    build-essential \
-    libz-dev \
-    libsdl2-dev \
-    libboost-dev \
-    libboost-filesystem-dev

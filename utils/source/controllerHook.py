@@ -36,7 +36,7 @@ class controllerHook(Observer):
         Observer.__init__(self)
 
         self.log = logUtils(verbose=verbose)
-        self.inactivityTime = inactivityTime
+        self.inactivityTime = float(inactivityTime)
         self.verbose = verbose
 
         self.joysticks = []

@@ -1,5 +1,5 @@
 etc/
-source/ /usr/bin
+source/* /usr/bin
 
 config/.bashrc /home/crossgame
 config/.xinitrc /home/crossgame

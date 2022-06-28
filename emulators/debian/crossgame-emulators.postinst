@@ -1,17 +1,11 @@
 #!/bin/bash
 
 echo "Creating PS1 memcards folder soft link..."
-ln -s "/rpi/emulators/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
+ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
 
 echo "Creating PSP memcards folder soft link..."
-ln -s "/rpi/emulators/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
+ln -s "/rpi/content/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
 
 echo "Creating N64 memcards folder soft link..."
 mkdir -p "/home/crossgame/.local/share/mupen64plus/save"
-ln -s "/rpi/emulators/memcards/n64" "/home/crossgame/.local/share/mupen64plus/save"
-
-echo "Updating user owner for emulators conf folder"
-chown -R crossgame:crossgame "/home/crossgame/.local/share/duckstation"
-chown -R crossgame:crossgame "/home/crossgame/.config/ppsspp"
-chown -R crossgame:crossgame "/home/crossgame/.config/mupen64plus"
-chown -R crossgame:crossgame "/home/crossgame/.local/share/mupen64plus"
+ln -s "/rpi/content/memcards/n64" "/home/crossgame/.local/share/mupen64plus/save"

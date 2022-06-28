@@ -1,2 +1,2 @@
 etc/
-source/ /usr/bin
+source/* /usr/bin

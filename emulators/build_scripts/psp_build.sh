@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 [[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
 . ./build_scripts/common.sh
 
@@ -39,7 +41,7 @@ echo "### Compiling PPSSPP binaries"
 echo
 
 cmake "${CODE_FOLDER}"
-cmake -j 4 "${CODE_FOLDER}"
+cmake j"$(nproc)" "${CODE_FOLDER}"
 make install
 
 echo

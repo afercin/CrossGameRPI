@@ -7,6 +7,7 @@ Standards-Version: 3.8.4s
 
 Package: crossgame-utils
 Architecture: all
-Depends: python3, python3-pip, rpi.gpio-common, python3-rpi.gpio, python3-flask, python3-tk, chromium-chromedriver
+Depends: python3, python3-pip, rpi.gpio-common, python3-rpi.gpio, python3-flask, python3-tk, 
+ chromium-chromedriver, python3-dev, build-essential
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: CrossGame utils and services

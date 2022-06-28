@@ -3,7 +3,7 @@ version: "3.3"
 services:
     packager:
         container_name: crossgame.packager.ubuntu
-        image: crossgame.packager.ubuntu:20.04
+        image: crossgame.packager.ubuntu:22.04
         build: .
         working_dir: /scripts
         volumes:
@@ -15,13 +15,13 @@ services:
         command: bash -c "
             rm -r /release/* || true
             && cd /emulators
-            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && dpkg-buildpackage -b -us -uc
             && cd /confBase
-            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && dpkg-buildpackage -b -us -uc
             && cd /utils
-            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && dpkg-buildpackage -b -us -uc
             && cd /plymouth
-            && dpkg-buildpackage -rfakeroot -b -us -uc
+            && dpkg-buildpackage -b -us -uc
             && mv /*.deb /release"
     app-compiler:
         container_name: crossgame.compiler

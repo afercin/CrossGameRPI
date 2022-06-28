@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 [[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
 . ./build_scripts/common.sh
 

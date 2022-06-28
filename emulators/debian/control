@@ -7,6 +7,7 @@ Standards-Version: 3.8.4
 
 Package: crossgame-emulators
 Architecture: all
-Depends: libqt5gui5, libsdl2-dev
+Depends: libqt5gui5, libsdl2-dev, libxxhash-dev, mesa-vulkan-drivers, vulkan-tools, vulkan-validationlayers,
+ vulkan-validationlayers-dev, xcvt
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: CrossGame emulators compatibility

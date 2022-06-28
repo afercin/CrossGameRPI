@@ -159,12 +159,10 @@ class keyboardTranslator():
             self.sendKey(IRMAP[keyDown])
 
     def start(self):
-        self.log.info("starting")
         self.controller.start()
         self.decoder.start()
 
     def stop(self):
-        self.log.info("stopping")
         self.controller.stop()
         self.decoder.stop()
 

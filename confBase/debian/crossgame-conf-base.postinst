@@ -11,11 +11,6 @@ done
 echo "Setting root password..."
 sudo usermod --password $(echo patata123 | openssl passwd -1 -stdin) root
 
-echo "Setting up rc-local service..."
-chmod u+x "/etc/rc.local"
-sudo systemctl enable rc-local
-sudo systemctl start rc-local
-
 #Establecer zona horaria
 echo "Setting Europe/Madrid timezone..."
 sudo timedatectl set-timezone Europe/Madrid 
@@ -26,6 +21,44 @@ PASS="patata123"
 echo -ne "$PASS\n$PASS\n" | smbpasswd -a -s "root"
 sudo service smbd restart
 sudo systemctl disable smbd.service
+
+#Installar netdata
+echo "Installing netdata..."
+if [[ ! -d "/opt/netdata" ]]; then
+    bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
+else
+    echo "Netdata is already installed"
+fi
+ 
+#Actualizar permisos
+echo "Updating folders permission"
+sudo chmod -R 777 "/etc/productConf"
+sudo chmod -R 777 "/var/log/product"
+sudo chown -R crossgame:crossgame "/home/crossgame"
+
+#Si hay un SSD conectado se monta y se añade a fstb
+if ls /dev/sda1 > /dev/null 2>&1; then
+    echo "External disk detected, making it permanent at /rpi"
+    uuid=$(blkid /dev/sda1 | tr " " "\n" | grep "UUID" | head -1 | cut -d '"' -f2)
+    if ! grep -q $uuid /etc/fstab; then
+        echo "UUID=${uuid}     /rpi   auto    rw,user,auto    0    0" >> /etc/fstab
+    fi
+
+    if [[ "$(ls -A /rpi > /dev/null)" ]]; then
+        mkdir /tmp/data
+        mv /rpi/* /tmp/data
+    fi
+
+    if mount -a; then
+        chown -R crossgame:crossgame /rpi
+        mv /tmp/data/* /rpi || :
+    fi
+fi
+
+#Habilitar servicios
+echo "Setting up rc-local service..."
+chmod u+x "/etc/rc.local"
+systemctl enable rc-local && systemctl start rc-local
 
 # #Preparar repositorio para instalar docker
 # echo "Adding docker repository..."
@@ -46,15 +79,3 @@ sudo systemctl disable smbd.service
 # version="2.2.2"
 # sudo curl -L "https://github.com/docker/compose/releases/download/v${version}/docker-compose-linux-aarch64" -o "/usr/local/bin/docker-compose"
 # sudo chmod +x "/usr/local/bin/docker-compose"
-
-#Installar netdata
-echo "Installing netdata..."
-if [[ ! -d "/opt/netdata" ]]; then
-    bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
-else
-    echo "Netdata is already installed"
-fi
-
-#update /boot/config.txt
-sed -i "s/#disable_overscan=1/disable_overscan=1/g" /boot/config.txt
-echo "gpu_mem=256" >> /boot/config.txt

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 [[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
 . ./build_scripts/common.sh
 
@@ -36,15 +38,17 @@ for component in ${COMPONENTS}; do
         echo "### Pulling  ${component} code..."
         git pull
     fi
-
-    echo
-    echo "### Compiling ${component} binaries"
     echo
 
-    make -C "${COMPONENT_FOLDER}/projects/unix" PREFIX="${BUILD_FOLDER}" all
-    make -C "${COMPONENT_FOLDER}/projects/unix" install PREFIX="${BUILD_FOLDER}"
+    if [[ $component =~ (ui-console|audio-sdl|input-sdl|video-glide64mk2)$ ]]; then
+        echo "### Compiling ${component} binaries"
+        echo
+
+        make -C "${COMPONENT_FOLDER}/projects/unix" PREFIX="${BUILD_FOLDER}" all
+        make -C "${COMPONENT_FOLDER}/projects/unix" install PREFIX="${BUILD_FOLDER}"
     
-    echo
+        echo
+    fi
 done
 
 echo "### Copying Mupen64Plus binaries to ${DEST_FOLDER}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 #Instalar librerías de python
-pythonDependencies=("screeninfo" "ds4drv" "pygame" "pynput" "playsound" "selenium")
+pythonDependencies=("screeninfo" "ds4drv" "pygame" "pynput" "playsound" "selenium" "pyautogui")
 
 for dependency in ${pythonDependencies[@]}; do
     echo "Installing $dependency"
