@@ -2,8 +2,8 @@
 
 set -e
 
-[[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
-. ./build_scripts/common.sh
+[[ ! -f /opt/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
+. /opt/common.sh
 
 ## Variables
 CODE_FOLDER="${GIT_FOLDER}/ps1"

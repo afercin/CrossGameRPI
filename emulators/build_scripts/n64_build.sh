@@ -2,8 +2,8 @@
 
 set -e
 
-[[ ! -f ./common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
-. ./common.sh
+[[ ! -f /opt/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
+. /opt/common.sh
 
 ## Variables
 CODE_FOLDER="${GIT_FOLDER}/n64"
@@ -42,7 +42,6 @@ for component in ${COMPONENTS}; do
         echo "### Compiling ${component} binaries"
         echo
 
-        make clean
         make -C "${COMPONENT_FOLDER}/projects/unix" all
         make -C "${COMPONENT_FOLDER}/projects/unix" install
     
