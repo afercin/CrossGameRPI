@@ -5,24 +5,22 @@ services:
         container_name: crossgame.packager.raspbian
         image: crossgame.packager.raspbian:buster
         build: .
-        working_dir: /scripts
+        working_dir: /src
         volumes:
-         - ../release:/release
-         - ../confBase:/confBase
-         - ../emulators:/emulators
-         - ../plymouth:/plymouth
-         - ../utils:/utils
+         - ..:/src
         command: bash -c "
-            rm -r /release/* || true
-            && cd /emulators
+            rm -rf /src/release/*
+            && cd emulators
             && dpkg-buildpackage -b -us -uc
-            && cd /confBase
+            && cd ../confBase
             && dpkg-buildpackage -b -us -uc
-            && cd /utils
+            && cd ../utils
             && dpkg-buildpackage -b -us -uc
-            && cd /plymouth
+            && cd ../plymouth
             && dpkg-buildpackage -b -us -uc
-            && mv /*.deb /release"
+            && mv /src/*.deb /src/release
+            && rm -rf /src/*.buildinfo /src/*.changes
+            && rm -rf $$(find /src -name "*.debhelper*")"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder

@@ -1,5 +1,5 @@
 from pynput.keyboard import Controller, Key
-from irDeconder import irDecoder
+from irDecoder import irDecoder
 from controllerHook import *
 import configparser
 import requests

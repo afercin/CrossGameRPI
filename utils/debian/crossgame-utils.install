@@ -1,2 +1,2 @@
-etc/
-source/* /usr/bin
+source/logUtils.py /usr/bin
+source/event.py /usr/bin

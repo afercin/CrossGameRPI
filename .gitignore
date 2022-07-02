@@ -1,7 +1,7 @@
-*__pycache__
-*deb
-.vscode
-release
+*__pycache__/
+*.deb
+.vscode/
+release/
 
 *.changes
 *.buildinfo
@@ -9,7 +9,4 @@ release
 *.substvars
 files
 
-*/debian/crossgame-conf-base
-*/debian/crossgame-emulators
-*/debian/crossgame-plymouth
-*/debian/crossgame-utils
+*/debian/crossgame-*/

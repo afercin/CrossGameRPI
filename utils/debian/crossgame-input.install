@@ -1,0 +1,3 @@
+source/controllerHook.py /usr/bin
+source/irDecoder.py /usr/bin
+source/keyboardTranslator.py /usr/bin

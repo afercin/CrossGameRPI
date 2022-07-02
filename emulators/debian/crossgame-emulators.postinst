@@ -7,6 +7,8 @@ if [[ -f /opt/common.sh ]]; then
     done
 fi
 
+pip3 install screeninfo
+
 echo "Creating PS1 memcards folder soft link..."
 ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
 
