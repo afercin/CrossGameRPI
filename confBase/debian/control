@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 7.0.50~)
 Standards-Version: 3.8.4
 
 Package: crossgame-conf-base
-Architecture: arm64
+Architecture: all
 Depends: crossgame-emulators, crossgameapp, crossgame-utils, crossgame-plymouth,
  xinit, x11-xserver-utils, ifupdown, xserver-common, xserver-xorg-core, xserver-xorg,
  xserver-xorg-legacy, xserver-xorg-video-fbdev, xterm, xserver-xorg-video-all, 
