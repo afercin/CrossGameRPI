@@ -21,14 +21,6 @@ PASS="patata123"
 echo -ne "$PASS\n$PASS\n" | smbpasswd -a -s "root"
 sudo service smbd restart
 sudo systemctl disable smbd.service
-
-#Installar netdata
-echo "Installing netdata..."
-if [[ ! -d "/opt/netdata" ]]; then
-    bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
-else
-    echo "Netdata is already installed"
-fi
  
 #Actualizar permisos
 echo "Updating folders permission"
@@ -79,3 +71,15 @@ systemctl enable rc-local && systemctl start rc-local
 # version="2.2.2"
 # sudo curl -L "https://github.com/docker/compose/releases/download/v${version}/docker-compose-linux-aarch64" -o "/usr/local/bin/docker-compose"
 # sudo chmod +x "/usr/local/bin/docker-compose"
+
+#Installar netdata
+echo "Installing netdata..."
+if [[ ! -d "/opt/netdata" ]]; then
+    bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive
+else
+    echo "Netdata is already installed"
+fi
+
+#update /boot/config.txt
+sed -i "s/#disable_overscan=1/disable_overscan=1/g" /boot/config.txt
+echo "gpu_mem=256" >> /boot/config.txt

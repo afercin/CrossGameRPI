@@ -6,9 +6,7 @@ set -e
 . ./build_scripts/common.sh
 
 ## Variables
-EMULATOR="psp"
-DEST_FOLDER="${EMULATORS_FOLDER}/${EMULATOR}"
-CODE_FOLDER="${GIT_FOLDER}/${EMULATOR}"
+CODE_FOLDER="${GIT_FOLDER}/psp"
 BUILD_FOLDER="${CODE_FOLDER}/build"
 
 GIT_REPOSITORY="https://github.com/hrydgard/ppsspp.git"
@@ -27,7 +25,8 @@ if [[ ! -d "${CODE_FOLDER}" ]]; then
 else
     cd "${CODE_FOLDER}"
     echo "### Pulling PPSSPP code..."
-    git pull
+    git pull --rebase "${GIT_REPOSITORY}"
+    git submodule update --init --recursive
 fi
 echo
 
@@ -45,8 +44,8 @@ cmake j"$(nproc)" "${CODE_FOLDER}"
 make install
 
 echo
-echo "### Copying PPSSPP binaries to ${DEST_FOLDER}"
+echo "### Copying PPSSPP binaries to ${EMULATORS_FOLDER}"
 echo
 
-mkdir -p "${DEST_FOLDER}"
-cp -r "${CODE_FOLDER}/assets" "${BUILD_FOLDER}/PPSSPPSDL" "${DEST_FOLDER}"
+mkdir -p "${EMULATORS_FOLDER}"
+cp -r "${CODE_FOLDER}/assets" "${BUILD_FOLDER}/PPSSPPSDL" "${EMULATORS_FOLDER}"

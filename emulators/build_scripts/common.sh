@@ -1,4 +1,4 @@
 #!/bin/bash
 
-EMULATORS_FOLDER="/emulators/rpi/emulators"
-GIT_FOLDER="/emulators/.third-party"
+EMULATORS_FOLDER="/usr/bin"
+GIT_FOLDER="/src/.third-party"

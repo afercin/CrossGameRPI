@@ -2,13 +2,11 @@
 
 set -e
 
-[[ ! -f ./build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
-. ./build_scripts/common.sh
+[[ ! -f ./common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
+. ./common.sh
 
 ## Variables
-EMULATOR="n64"
-DEST_FOLDER="${EMULATORS_FOLDER}/${EMULATOR}"
-CODE_FOLDER="${GIT_FOLDER}/${EMULATOR}"
+CODE_FOLDER="${GIT_FOLDER}/n64"
 BUILD_FOLDER="${CODE_FOLDER}/build"
 
 USR_FOLDER="/emulators/usr/"
@@ -44,26 +42,10 @@ for component in ${COMPONENTS}; do
         echo "### Compiling ${component} binaries"
         echo
 
-        make -C "${COMPONENT_FOLDER}/projects/unix" PREFIX="${BUILD_FOLDER}" all
-        make -C "${COMPONENT_FOLDER}/projects/unix" install PREFIX="${BUILD_FOLDER}"
+        make clean
+        make -C "${COMPONENT_FOLDER}/projects/unix" all
+        make -C "${COMPONENT_FOLDER}/projects/unix" install
     
         echo
     fi
 done
-
-echo "### Copying Mupen64Plus binaries to ${DEST_FOLDER}"
-echo
-
-[[ -d "${DEST_FOLDER}" ]] && rm -r "${DEST_FOLDER}"
-mv "${BUILD_FOLDER}/bin" "${DEST_FOLDER}"
-
-echo "### Copying Mupen64Plus libraries to ${LIB_FOLDER}/lib"
-echo
-
-mkdir -p "${LIB_FOLDER}"
-cp -r "${BUILD_FOLDER}/lib" "${LIB_FOLDER}"
-
-echo "### Copying Mupen64Plus libraries to ${LIB_FOLDER}/share"
-echo
-
-cp -r "${BUILD_FOLDER}/share" "${USR_FOLDER}"

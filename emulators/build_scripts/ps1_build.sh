@@ -6,9 +6,7 @@ set -e
 . ./build_scripts/common.sh
 
 ## Variables
-EMULATOR="ps1"
-DEST_FOLDER="${EMULATORS_FOLDER}/${EMULATOR}"
-CODE_FOLDER="${GIT_FOLDER}/${EMULATOR}"
+CODE_FOLDER="${GIT_FOLDER}/ps1"
 BUILD_FOLDER="${CODE_FOLDER}/build"
 
 GIT_REPOSITORY="https://github.com/stenzek/duckstation.git"
@@ -44,8 +42,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -GNinja "${CODE_FOLDER}"
 ninja 
 
 echo
-echo "### Copying DuckStation binaries to ${DEST_FOLDER}"
+echo "### Copying DuckStation binaries to ${EMULATORS_FOLDER}"
 echo
 
-[[ -d "${DEST_FOLDER}" ]] && rm -r "${DEST_FOLDER}"
-mv "${BUILD_FOLDER}/bin" "${DEST_FOLDER}"
+cp -r ${BUILD_FOLDER}/bin/* "${EMULATORS_FOLDER}"

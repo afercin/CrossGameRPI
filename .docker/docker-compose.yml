@@ -2,8 +2,8 @@ version: "3.3"
 
 services:
     packager:
-        container_name: crossgame.packager.ubuntu
-        image: crossgame.packager.ubuntu:22.04
+        container_name: crossgame.packager.raspbian
+        image: crossgame.packager.raspbian:buster
         build: .
         working_dir: /scripts
         volumes:
@@ -31,6 +31,6 @@ services:
          - ../../CrossGameApp:/app
          - ../release:/release
         command: bash -c "
-            npm run dist_arm64
-            && cp ./dist/crossgame*arm64.deb /release
+            npm run dist_armhf
+            && cp ./dist/crossgame*armv7l.deb /release
             && rm -r ./dist ./release"

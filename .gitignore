@@ -3,11 +3,6 @@
 .vscode
 release
 
-emulators/.third-party
-emulators/rpi
-emulators/usr/share
-emulators/usr/local
-
 *.changes
 *.buildinfo
 *debhelper*
