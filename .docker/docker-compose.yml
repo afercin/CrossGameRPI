@@ -20,7 +20,8 @@ services:
             && dpkg-buildpackage -b -us -uc
             && mv /src/*.deb /src/release
             && rm -rf /src/*.buildinfo /src/*.changes
-            && rm -rf $$(find /src -name "*.debhelper*")"
+            && rm -rf $$(find /src -name "*.debhelper*")
+            && rm -rf /src/*/debian/*.substvars /src/*/debian/files"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder
