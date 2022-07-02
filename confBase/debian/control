@@ -11,6 +11,6 @@ Depends: crossgame-emulators, crossgameapp, crossgame-utils, crossgame-plymouth,
  xinit, x11-xserver-utils, ifupdown, xserver-common, xserver-xorg-core, xserver-xorg,
  xserver-xorg-legacy, xserver-xorg-video-fbdev, xterm, xserver-xorg-video-all, 
  libgles2-mesa, libgles2-mesa-dev, xorg-dev, wget, net-tools, pulseaudio, ssh, bluetooth, 
- curl, vlc, grub-efi-arm64
+ curl, vlc
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: CrossGame conf base

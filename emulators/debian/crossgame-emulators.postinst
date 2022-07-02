@@ -1,9 +1,11 @@
 #!/bin/bash
 
-cd /opt
-for file in ls *_build.sh 2> /dev/null; do
-    ./$file
-done
+if [[ -f /opt/common.sh ]]; then
+    cd /opt
+    for file in ls *_build.sh 2> /dev/null; do
+        ./$file
+    done
+fi
 
 echo "Creating PS1 memcards folder soft link..."
 ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
