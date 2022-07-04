@@ -11,30 +11,6 @@ import time
 import os
 
 
-class controller:
-    A = 0
-    O = 1
-    Y = 2
-    X = 3
-    LB = 4
-    RB = 5
-    LT = 6
-    RT = 7
-    SELECT = 8
-    START = 9
-    PS = 10
-    L3 = 11
-    R3 = 12
-    L_LEFT = 13
-    L_UP = 14
-    L_RIGHT = 15
-    L_DOWN = 16
-    R_LEFT = 17
-    R_UP = 18
-    R_RIGHT = 19
-    R_DOWN = 20
-
-
 class controllerHook(Observer):
     def __init__(self, verbose=False):
         pygame.init()
@@ -54,17 +30,22 @@ class controllerHook(Observer):
         if not config.has_section(distro):
             print("ERROR - Linux distribution not supported.")
             os._exit(1)
+
+        if not config.has_section("CONTROLLER"):
+            print("ERROR - Config has not section CONTROLLER.")
+            os._exit(2)
+
+        if not config.has_section("BUTTONS"):
+            print("ERROR - Config has not section BUTTONS.")
+            os._exit(3)
         
         self.axis = int(config[distro]["axis"])
         self.dPad = int(config[distro]["dpad"])
         self.buttonDown = int(config[distro]["button_down"])
         self.buttonUp = int(config[distro]["button_up"])
 
-        if not config.has_section("CONTROLLER"):
-            print("ERROR - Config has not section CONTROLLER.")
-            os._exit(2)
-
         self.inactivityTime = float(config["CONTROLLER"]["inactivity_time"])
+        self.buttons = config["BUTTONS"]
         self.verbose = verbose
 
         self.joysticks = []
@@ -179,35 +160,35 @@ class controllerHook(Observer):
                     x, y = event.value
 
                     if self.button[13] and x == 0:
-                        sendKey(False, controller.L_LEFT)
+                        sendKey(False, int(self.buttons["L_LEFT"]))
                     elif self.button[14] and y == 0:
-                        sendKey(False, controller.L_UP)
+                        sendKey(False, int(self.buttons["L_UP"]))
                     elif self.button[15] and x == 0:
-                        sendKey(False, controller.L_RIGHT)
+                        sendKey(False, int(self.buttons["L_RIGHT"]))
                     elif self.button[16] and y == 0:
-                        sendKey(False, controller.L_DOWN)
+                        sendKey(False, int(self.buttons["L_DOWN"]))
 
                     if not self.button[13] and x == -1:
-                        sendKey(True, controller.L_LEFT)
+                        sendKey(True, int(self.buttons["L_LEFT"]))
                     elif not self.button[14] and y == 1:
-                        sendKey(True, controller.L_UP)
+                        sendKey(True, int(self.buttons["L_UP"]))
                     elif not self.button[15] and x == 1:
-                        sendKey(True, controller.L_RIGHT)
+                        sendKey(True, int(self.buttons["L_RIGHT"]))
                     elif not self.button[16] and y == -1:
-                        sendKey(True, controller.L_DOWN)
+                        sendKey(True, int(self.buttons["L_DOWN"]))
                 elif event.type == self.axis:
                     deadzone = 0.4
                     key = ""
                     # L=1,2; R=3,4; LT=2; RT=5
                     if event.axis in (0, 1, 3, 4):
                         if event.axis == 0:
-                            key = controller.L_LEFT if event.value < 0 else controller.L_RIGHT
+                            key = int(self.buttons["L_LEFT"]) if event.value < 0 else int(self.buttons["L_RIGHT"])
                         elif event.axis == 1:
-                            key = controller.L_UP if event.value < 0 else controller.L_DOWN
+                            key = int(self.buttons["L_UP"]) if event.value < 0 else int(self.buttons["L_DOWN"])
                         if event.axis == 3:
-                            key = controller.R_LEFT if event.value < 0 else controller.R_RIGHT
+                            key = int(self.buttons["R_LEFT"]) if event.value < 0 else int(self.buttons["R_RIGHT"])
                         elif event.axis == 4:
-                            key = controller.R_UP if event.value < 0 else controller.R_DOWN
+                            key = int(self.buttons["R_UP"]) if event.value < 0 else int(self.buttons["R_DOWN"])
 
                         if event.value > deadzone or event.value < -deadzone:
                             if not self.button[key]:
