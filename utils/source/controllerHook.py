@@ -1,11 +1,14 @@
 #!/usr/bin/python3
-from logUtils import logUtils
 from datetime import datetime
 from event import *
+import configparser
 import lsb_release
 import threading
+import atexit
 import pygame
+import logger
 import time
+import os
 
 
 class controller:
@@ -33,12 +36,35 @@ class controller:
 
 
 class controllerHook(Observer):
-    def __init__(self, inactivityTime, verbose=False):
+    def __init__(self, verbose=False):
         pygame.init()
         Observer.__init__(self)
 
-        self.log = logUtils(verbose=verbose)
-        self.inactivityTime = float(inactivityTime)
+        configFile = "/etc/productConf/controller.ini"
+        if "dev" in os.path.abspath(os.getcwd()):
+            configFile = "/home/adrix/personal_dev/CrossGameRPI/utils" + configFile
+
+        config = configparser.ConfigParser()
+        config.read(configFile)
+
+        self.log = logger.start_logger(config, verbose)
+        atexit.register(self.log.printTail)
+
+        distro = lsb_release.get_distro_information()["ID"].upper()
+        if not config.has_section(distro):
+            print("ERROR - Linux distribution not supported.")
+            os._exit(1)
+        
+        self.axis = int(config[distro]["axis"])
+        self.dPad = int(config[distro]["dpad"])
+        self.buttonDown = int(config[distro]["button_down"])
+        self.buttonUp = int(config[distro]["button_up"])
+
+        if not config.has_section("CONTROLLER"):
+            print("ERROR - Config has not section CONTROLLER.")
+            os._exit(2)
+
+        self.inactivityTime = float(config["CONTROLLER"]["inactivity_time"])
         self.verbose = verbose
 
         self.joysticks = []
@@ -51,18 +77,6 @@ class controllerHook(Observer):
         self.doublePress = False
         self.lastKeyPressed = None
 
-        distro = lsb_release.get_distro_information()
-
-        if distro["ID"] == "Ubuntu":
-            self.dPad = 1538
-            self.buttonDown = 1539
-            self.buttonUp = 1540
-            self.axis = 1536
-        elif distro["ID"] == "Raspbian":
-            self.dPad = 9
-            self.buttonDown = 10
-            self.buttonUp = 11
-            self.axis = 7
 
     def dispose(self):
         if not self.end:
@@ -134,7 +148,7 @@ class controllerHook(Observer):
                     joysticks = [pygame.joystick.Joystick(
                         i) for i in range(pygame.joystick.get_count())]
                     if len(self.joysticks) > len(joysticks):
-                        self.log.warning("Controller disconected! Remaining controllers: {}".format(
+                        self.log.warn("Controller disconected! Remaining controllers: {}".format(
                             str(pygame.joystick.get_count())))
                     elif pygame.joystick.get_count() > 0:
                         self.log.info("Controller remaining connected!")
@@ -153,7 +167,7 @@ class controllerHook(Observer):
                         self.log.info("Waiting for controller...")
                         show = True
                 else:
-                    self.log.warning("Inactivity check...")
+                    self.log.warn("Inactivity check...")
                 checkController()
                 time.sleep(0.05 if len(self.joysticks) == 0 else 0)
 
@@ -208,7 +222,7 @@ class controllerHook(Observer):
 
 
 if __name__ == "__main__":
-    aaa = controllerHook(inactivityTime=15, verbose=True)
+    aaa = controllerHook(verbose=True)
 
     def keyUp(key):
         print("KeyUp: " + str(key))

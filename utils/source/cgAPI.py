@@ -6,7 +6,7 @@ from flask import Flask
 import configparser
 import os
 
-CONFFILE = "/etc/productConf/cg.conf"
+CONFFILE = "/etc/productConf/api.ini"
 if "dev" in os.path.abspath(os.getcwd()):
     CONFFILE = "/home/adrix/personal_dev/CrossGameRPI/utils" + CONFFILE
 

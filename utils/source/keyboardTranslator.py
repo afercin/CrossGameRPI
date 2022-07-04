@@ -5,7 +5,7 @@ import configparser
 import requests
 import os
 
-CONFFILE = "/etc/productConf/cg.conf"
+CONFFILE = "/etc/productConf/api.ini"
 IP = "localhost"
 if "dev" in os.path.abspath(os.getcwd()):
     CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + CONFFILE

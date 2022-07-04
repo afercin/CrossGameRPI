@@ -1,80 +1,49 @@
+from datetime import datetime
+from event import *
 import RPi.GPIO as GPIO
 import multiprocessing
-from datetime import datetime
-from logUtils import logUtils
-from event import *
+import configparser
+import atexit
+import logger
+import os
 
 
 class irDecoder(Observer):
-
-    BUTTONS = {
-        "0x3a10c0807": "TVPowerReleased",
-        "0x3a10c2c03": "TVSourceReleased",
-        "0x3a10cb807": "TVVolumeUpReleased",
-        "0x3a10c3807": "TVVolumeDownReleased",
-        "0x3a10cd807": "TVMuteReleased",
-
-        "0x320df10ef": "TVPower",
-        "0x3a10c700f": "TIVO",
-        "0x3a10cd10e": "Power",
-        "0x3a10c2807": "Up",
-        "0x3a10c6807": "Down",
-        "0x3a10ce807": "Left",
-        "0x3a10ca807": "Right",
-        "0x3a10c9807": "Ok",
-        "0x320dfd02f": "TVSource",
-        "0x3a10c510e": "Language",
-        "0x3a10c220d": "Zoom",
-        "0x3a10c6c03": "Guide",
-        "0x3a10cc807": "Info",
-        "0x3a10c8807": "ShowTV",
-
-        "0x320df40bf": "TVVolumeUp",
-        "0x320dfc03f": "TVVolumeDown",
-        "0x320df906f": "TVMute",
-        "0x3a10c7807": "ProgUp",
-        "0x3a10cf807": "ProgDown",
-        "0x3a10c1807": "Dislike",
-        "0x3a10c040b": "Rec",
-        "0x3a10c5807": "Like",
-
-        "0x3a10c840b": "Play",
-        "0x3a10cc40b": "Pause",
-        "0x3a10c440b": "Prev",
-        "0x3a10c240b": "Next",
-        "0x3a10c640b": "Back",
-        "0x3a10ca40b": "Slow",
-        "0x3a10ce40b": "GoOn",
-        "0x3a10cba05": "Videoclub",
-
-        "0x3a10c0609": "Red",
-        "0x3a10c8609": "Green",
-        "0x3a10c4609": "Yellow",
-        "0x3a10cc609": "Blue",
-        "0x3a10c140b": "1",
-        "0x3a10c940b": "2",
-        "0x3a10c540b": "3",
-        "0x3a10cd40b": "4",
-        "0x3a10c340b": "5",
-        "0x3a10cb40b": "6",
-        "0x3a10c740b": "7",
-        "0x3a10cf40b": "8",
-        "0x3a10c0c03": "9",
-        "0x3a10c4c03": "C",
-        "0x3a10c8c03": "0",
-        "0x3a10ccc03": "Enter"
-    }
-
-    TRASH = ["0x1", "0x2", "0x3", "0x4", "0x5"]
-
-    def __init__(self, pin, verbose=False):
+    def __init__(self, verbose=False):
         Observer.__init__(self)
 
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(pin, GPIO.IN)
+        configFile = "/etc/productConf/irDecoder.ini"
+        if "dev" in os.path.abspath(os.getcwd()):
+            configFile = "/home/adrix/personal_dev/CrossGameRPI/utils" + configFile
 
-        self.log = logUtils(verbose=verbose)
-        self.pin = pin
+        config = configparser.ConfigParser()
+        config.read(configFile)
+
+        self.log = logger.start_logger(config, verbose)
+        atexit.register(self.log.printTail)
+
+        if not config.has_section("DECODER"):
+            print("ERROR - Config has not section DECODER.")
+            os._exit(1)
+
+        if not config.has_section("BUTTONS"):
+            print("ERROR - Config has not section BUTTONS.")
+            os._exit(2)
+
+        if not config.has_section("UNKNOW"):
+            print("ERROR - Config has not section UNKNOW.")
+            os._exit(3)
+        
+        self.pin = int(config["DECODER"]["pin"])
+        self.buttons = config["BUTTONS"]
+
+        self.trash = list()
+        for trashSignal in config["UNKNOW"]["trash"].split(";"):
+            self.trash.append(trashSignal)
+
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.pin, GPIO.IN)
+
         self.end = True
 
     def dispose(self):
@@ -106,10 +75,10 @@ class irDecoder(Observer):
     def checkInData(self):
         while not self.end:
             inData = self.getInData()
-            if inData not in self.TRASH:
+            if inData not in self.trash:
                 if self.dataReceived:
-                    if inData in self.BUTTONS.keys():
-                        Event("OnDataReceived", self.BUTTONS[inData])
+                    if inData in self.buttons.keys():
+                        Event("OnDataReceived", self.buttons[inData])
                     else:
                         self.log.error(
                             "Unknow value \"{}\"!".format(inData))
@@ -168,7 +137,7 @@ class irDecoder(Observer):
 if __name__ == "__main__":
     def valueReceived(value):
         print("Received value: {}".format(value))
-    ir = irDecoder(pin=12, verbose=True)
+    ir = irDecoder(verbose=True)
     ir.onDataReceived(valueReceived)
     ir.start()
     input()
