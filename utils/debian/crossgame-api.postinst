@@ -1,6 +1,6 @@
 #!/bin/bash
 #Instalar librerías de python
-pythonDependencies=("playsound" "selenium" "pyautogui")
+pythonDependencies=("pydub" "selenium" "pyautogui")
 
 for dependency in ${pythonDependencies[@]}; do
     echo "Installing $dependency"

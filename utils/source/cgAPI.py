@@ -3,7 +3,8 @@ from flask import Flask, request, jsonify
 import configparser
 from apiResources.audio import *
 from apiResources.games import *
-from playsound import playsound
+from pydub import AudioSegment
+from pydub.playback import play
 from tvHandler import tvHandler
 import os
 
@@ -130,11 +131,12 @@ def open_video():
 CROSSGAMEMODE = config["PATH"]["mode"]
 SOUNDSFOLDER = config["PATH"]["sounds"]
 
+song = AudioSegment.from_wav(f"{SOUNDSFOLDER}/enter.wav")
 
 def restartx(controlFile):
     if os.path.isfile(controlFile):
         os.remove(controlFile)
-        playsound(f"{SOUNDSFOLDER}/enter.wav")
+        play(song)
         return os.system("killall crossgameapp") == 0
     return False
 
