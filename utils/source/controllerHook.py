@@ -1,9 +1,11 @@
-import pygame
-import threading
-import time
+#!/usr/bin/python3
 from logUtils import logUtils
 from datetime import datetime
 from event import *
+import lsb_release
+import threading
+import pygame
+import time
 
 
 class controller:
@@ -49,6 +51,19 @@ class controllerHook(Observer):
         self.doublePress = False
         self.lastKeyPressed = None
 
+        distro = lsb_release.get_distro_information()
+
+        if distro["ID"] == "Ubuntu":
+            self.dPad = 1538
+            self.buttonDown = 1539
+            self.buttonUp = 1540
+            self.axis = 1536
+        elif distro["ID"] == "Raspbian":
+            self.dPad = 9
+            self.buttonDown = 10
+            self.buttonUp = 11
+            self.axis = 7
+
     def dispose(self):
         if not self.end:
             self.stop()
@@ -93,7 +108,8 @@ class controllerHook(Observer):
         def sendKey(pressed, buttonNumber):
             if pressed:
                 self.button[buttonNumber] = True
-                self.doublePress = self.lastKeyPressed == buttonNumber and (datetime.now() - self.lastInput).total_seconds() < 0.15
+                self.doublePress = self.lastKeyPressed == buttonNumber and (
+                    datetime.now() - self.lastInput).total_seconds() < 0.15
                 self.lastKeyPressed = buttonNumber
                 if self.KeyDown and not self.pause:
                     Event("OnKeyDown", buttonNumber)
@@ -124,6 +140,8 @@ class controllerHook(Observer):
                         self.log.info("Controller remaining connected!")
                     self.joysticks = joysticks
 
+                for joystick in self.joysticks:
+                    joystick.init()
                 self.lastInput = datetime.now()
 
         self.lastInput = datetime.now()
@@ -142,8 +160,8 @@ class controllerHook(Observer):
             show = False
 
             # 1536 joys and triggers
-            for event in pygame.event.get(eventtype=[1538, 1539, 1540, 1536]):
-                if event.type == 1538:
+            for event in pygame.event.get(eventtype=(self.axis, self.dPad, self.buttonDown, self.buttonUp)):
+                if event.type == self.dPad:
                     x, y = event.value
 
                     if self.button[13] and x == 0:
@@ -163,13 +181,11 @@ class controllerHook(Observer):
                         sendKey(True, controller.L_RIGHT)
                     elif not self.button[16] and y == -1:
                         sendKey(True, controller.L_DOWN)
-
-                elif event.type in (1539, 1540):
-                    sendKey(event.type == 1539, event.button)
-                else:
+                elif event.type == self.axis:
                     deadzone = 0.4
                     key = ""
-                    if event.axis in (0, 1, 3, 4):  # L=1,2; R=3,4; LT=2; RT=5
+                    # L=1,2; R=3,4; LT=2; RT=5
+                    if event.axis in (0, 1, 3, 4):
                         if event.axis == 0:
                             key = controller.L_LEFT if event.value < 0 else controller.L_RIGHT
                         elif event.axis == 1:
@@ -185,6 +201,8 @@ class controllerHook(Observer):
                         else:
                             if self.button[key]:
                                 sendKey(False, key)
+                elif event.type in (self.buttonDown, self.buttonUp):
+                    sendKey(event.type == self.buttonDown, event.button)
 
             time.sleep(0.05)
 
