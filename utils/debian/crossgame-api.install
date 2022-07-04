@@ -1,5 +1,3 @@
 etc/
 source/cgAPI.py /usr/bin
-source/apiResources /usr/bin
-source/tvHandler.py /usr/bin
-source/tv /usr/bin
+source/apiModules /usr/bin

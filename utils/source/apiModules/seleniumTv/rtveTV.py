@@ -1,4 +1,4 @@
-from tv.baseTV import *
+from apiModules.seleniumTv.baseTV import *
 COOKIES = "//button[contains(@id, 'onetrust-accept')]"
 READY = "//div[contains(@class, 'vjs-playing')]"
 

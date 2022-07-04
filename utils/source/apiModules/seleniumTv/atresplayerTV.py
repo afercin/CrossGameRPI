@@ -1,4 +1,4 @@
-from tv.baseTV import *
+from apiModules.seleniumTv.baseTV import *
 COOKIES = "//a[contains(text(), 'ACEPTAR Y CERRAR')]"
 READY = "//div[@id='root']"
 

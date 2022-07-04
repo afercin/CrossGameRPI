@@ -1,4 +1,4 @@
-from tv.baseTV import *
+from apiModules.seleniumTv.baseTV import *
 COOKIES = "//span[text()='Aceptar']/parent::button"
 READY = "//ins[@data-ad-status='unfilled']"
 

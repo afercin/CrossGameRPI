@@ -1,2 +1,5 @@
-source/logUtils.py /usr/bin
 source/event.py /usr/bin
+source/blackWindow.py /usr/bin
+source/logger.py /usr/bin
+source/logUtils.py /usr/bin
+source/changeResolution.py /usr/bin

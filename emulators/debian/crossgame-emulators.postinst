@@ -1,20 +1,17 @@
 #!/bin/bash
 
-if [[ -f /opt/common.sh ]]; then
-    cd /opt
-    for file in ls *_build.sh 2> /dev/null; do
-        ./$file
-    done
+if [[ -z "/home/crossgame/.local/share/duckstation/memcards" ]]; then
+    echo "Creating PS1 memcards folder soft link..."
+    ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
 fi
 
-pip3 install screeninfo
+if [[ -z "/home/crossgame/.config/ppsspp/PSP/SAVEDATA" ]]; then
+    echo "Creating PSP memcards folder soft link..."
+    ln -s "/rpi/content/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
+fi
 
-echo "Creating PS1 memcards folder soft link..."
-ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
-
-echo "Creating PSP memcards folder soft link..."
-ln -s "/rpi/content/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
-
-echo "Creating N64 memcards folder soft link..."
-mkdir -p "/home/crossgame/.local/share/mupen64plus/save"
-ln -s "/rpi/content/memcards/n64" "/home/crossgame/.local/share/mupen64plus/save"
+if [[ -z "/home/crossgame/.local/share/mupen64plus/save" ]]; then
+    echo "Creating N64 memcards folder soft link..."
+    mkdir -p "/home/crossgame/.local/share/mupen64plus/save"
+    ln -s "/rpi/content/memcards/n64" "/home/crossgame/.local/share/mupen64plus/save"
+fi
