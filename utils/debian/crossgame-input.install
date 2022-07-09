@@ -1,3 +1,6 @@
+etc/productConf/translator.ini /etc/productConf
+etc/productConf/irDecoder.ini /etc/productConf
+etc/productConf/controller.ini /etc/productConf
 source/controllerHook.py /usr/bin
 source/irDecoder.py /usr/bin
 source/keyboardTranslator.py /usr/bin

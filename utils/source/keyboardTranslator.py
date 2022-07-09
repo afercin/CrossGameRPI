@@ -1,41 +1,22 @@
+#!/usr/bin/python3
+import os
+from time import sleep
+
+while not os.path.isfile("/tmp/display"):
+    print("Waiting x11")
+    sleep(1)
+
+try:
+    os.environ["DISPLAY"]
+except:
+    with open("/tmp/display") as f:
+        os.environ["DISPLAY"] = f.readline().split()[0]
+
 from pynput.keyboard import Controller, Key
 from irDecoder import irDecoder
 from controllerHook import *
 import configparser
 import requests
-import os
-
-CONFFILE = "/etc/productConf/api.ini"
-IP = "localhost"
-if "dev" in os.path.abspath(os.getcwd()):
-    CONFFILE = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + CONFFILE
-    IP = "10.0.0.20"
-
-APIPATH = f"http://{IP}:5000/api/v1"
-
-DS4MAP = {
-    controller.A: Key.enter,
-    controller.O: "q",
-    controller.Y: "y",
-    controller.X: "x",
-    # controller.LB: Key.f1,
-    # controller.RB: Key.f2,
-    # controller.LT: Key.f3,
-    # controller.RT: Key.f4,
-    controller.START: "r",
-    controller.SELECT: "o",
-    # controller.PS: Key.f6,
-    # controller.L3: Key.f7,
-    # controller.R3: Key.f8,
-    controller.L_LEFT: "a",
-    controller.L_UP: "w",
-    controller.L_RIGHT: "d",
-    controller.L_DOWN: "s",
-    # controller.R_LEFT: Key.f9,
-    # controller.R_UP: Key.page_up,
-    # controller.R_RIGHT: Key.f10,
-    # controller.R_DOWN: Key.page_down,
-}
 
 IRMAP = {
     # "TVPowerReleased": "TVPowerReleased",
@@ -98,45 +79,74 @@ IRMAP = {
 class keyboardTranslator():
 
     def __init__(self):
+        confPath = "/etc/productConf"
+        if "dev" in os.path.abspath(os.getcwd()):
+            confPath = "/home/afercin/dev/CrossGameRPI/crossGameUtils" + confPath
+        
         self.config = configparser.ConfigParser()
-        self.config.read(CONFFILE)
+        self.config.read(f"{confPath}/translator.ini")
 
-        self.controller = controllerHook(inactivityTime=self.config["DEFAULT"]["controllerInactivityTime"], verbose=True)
+        control = configparser.ConfigParser()
+        control.read(f"{confPath}/api.ini")
+
+        if not self.config.has_section("API"):
+            print("ERROR - Config has not section API.")
+            os._exit(1)
+
+        if not self.config.has_section("DS4MAP"):
+            print("ERROR - Config has not section DS4MAP.")
+            os._exit(2)
+        
+        if not control.has_section("CONTROL"):
+            print("ERROR - Config has not section CONTROL.")
+            os._exit(3)
+        
+        self.apiPath = self.config["API"]["path"]
+        self.DS4MAP = self.config["DS4MAP"]
+
+        self.config.add_section("CONTROL")
+        self.config["CONTROL"] = control["CONTROL"]
+
+        self.controller = controllerHook(verbose=True)
         self.controller.onKeyDown(self.checkControllerKeyDown)
 
-        self.decoder = irDecoder(pin=int(self.config["DEFAULT"]["irPin"]))
+        self.decoder = irDecoder()
         self.decoder.onDataReceived(self.checkDecoderDataReceived)
 
     def sendKey(self, key):
         if key == "powerOff":
             os.system("shutdown -f 0")
         elif key == "+":
-            requests.get(f"{APIPATH}/system/audio/volume-up")
+            requests.get(f"{self.apiPath}/system/audio/volume-up")
         elif key == "-":
-            requests.get(f"{APIPATH}/system/audio/volume-down")
+            requests.get(f"{self.apiPath}/system/audio/volume-down")
         elif key == "mute":
-            requests.get(f"{APIPATH}/system/audio/toogle")
+            requests.get(f"{self.apiPath}/system/audio/toogle")
         elif key == "restartx":
-            requests.get(f"{APIPATH}/system/restartx")
+            requests.get(f"{self.apiPath}/system/restartx")
         elif key == "disconnect":
-            for device in requests.get(f"{APIPATH}/system/bluetooth/devices").json():
+            for device in requests.get(f"{self.apiPath}/system/bluetooth/devices").json():
                 if device["name"] == "Wireless Controller":
-                    requests.get(f"{APIPATH}/system/bluetooth/disconnect?device=A0:AB:51:03:21:8F")
+                    requests.get(f"{self.apiPath}/system/bluetooth/disconnect?device=A0:AB:51:03:21:8F")
                     break
         elif not os.path.isfile(self.config["CONTROL"]["emulator"]):
             self.keyboard = Controller()
-            self.keyboard.press(key)
-            self.keyboard.release(key)
+            try:
+                self.keyboard.press(eval(key))
+                self.keyboard.release(eval(key))            
+            except:
+                self.keyboard.press(key)
+                self.keyboard.release(key)
 
     def checkControllerKeyDown(self, keyDown):
-        if self.controller.button[controller.PS] and self.controller.button[controller.SELECT]:
+        if self.controller.button[int(self.controller.buttons["ps"])] and self.controller.button[int(self.controller.buttons["select"])]:
             self.sendKey("powerOff")
-        elif self.controller.button[controller.SELECT] and self.controller.button[controller.START]:
+        elif self.controller.button[int(self.controller.buttons["select"])] and self.controller.button[int(self.controller.buttons["start"])]:
             self.sendKey("disconnect")
-        elif self.controller.button[controller.PS] and self.controller.doublePress:
+        elif self.controller.button[int(self.controller.buttons["ps"])] and self.controller.doublePress:
             self.sendKey("restartx")
-        elif keyDown in DS4MAP.keys():
-            self.sendKey(DS4MAP[keyDown])
+        elif keyDown in self.DS4MAP.keys():
+            self.sendKey(self.DS4MAP[keyDown])
 
     def checkDecoderDataReceived(self, keyDown):
         if keyDown == "Power":
@@ -146,13 +156,13 @@ class keyboardTranslator():
             self.sendKey("Q")        
         elif os.path.isfile(self.config["CONTROL"]["tv"]):
             if keyDown == "ProgUp":
-                requests.get(f"{APIPATH}/tv/channel-up")
+                requests.get(f"{self.apiPath}/tv/channel-up")
             elif keyDown == "ProgDown":
-                requests.get(f"{APIPATH}/tv/channel-down")
+                requests.get(f"{self.apiPath}/tv/channel-down")
             else:
                 try:
                     keyDown = int(keyDown)
-                    requests.get(f"{APIPATH}/tv/channel?number={keyDown}")
+                    requests.get(f"{self.apiPath}/tv/channel?number={keyDown}")
                 except:
                     pass
         elif keyDown in IRMAP.keys():

@@ -101,17 +101,18 @@ class controllerHook(Observer):
 
     def checkInputs(self):
         def sendKey(pressed, buttonNumber):
+            buttonName = list(self.buttons.keys())[list(self.buttons.values()).index(str(buttonNumber))]
             if pressed:
                 self.button[buttonNumber] = True
                 self.doublePress = self.lastKeyPressed == buttonNumber and (
                     datetime.now() - self.lastInput).total_seconds() < 0.15
                 self.lastKeyPressed = buttonNumber
                 if self.KeyDown and not self.pause:
-                    Event("OnKeyDown", buttonNumber)
+                    Event("OnKeyDown", buttonName)
             else:
                 self.button[buttonNumber] = False
                 if self.KeyUp and not self.pause:
-                    Event("OnKeyUp", buttonNumber)
+                    Event("OnKeyUp", buttonName)
             self.lastInput = datetime.now()
 
         def checkController():
