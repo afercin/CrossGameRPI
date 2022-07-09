@@ -85,6 +85,7 @@ fi
 
 #update /boot/config.txt
 sed -i "s/#disable_overscan=1/disable_overscan=1/g" /boot/config.txt
+sed -i "s/#hdmi_force_hotplug=1/hdmi_force_hotplug=1/g" /boot/config.txt
 if ! grep -q gpu_mem /boot/config.txt; then
     echo "gpu_mem=256" >> /boot/config.txt
 fi
