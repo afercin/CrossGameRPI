@@ -1,5 +1,10 @@
 *__pycache__/
 .vscode/
-release/
 
 */debian/crossgame-*/
+*debhelper*
+*.substvars
+files
+*.deb
+*.buildinfo
+*.changes
