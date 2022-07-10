@@ -18,63 +18,6 @@ from controllerHook import *
 import configparser
 import requests
 
-IRMAP = {
-    # "TVPowerReleased": "TVPowerReleased",
-    # "TVSourceReleased": "TVSourceReleased",
-    # "TVVolumeUpReleased": "TVVolumeUpReleased",
-    # "TVVolumeDownReleased": "TVVolumeDownReleased",
-    # "TVMuteReleased": "TVMuteReleased",
-    # "TVPower": "TVPower",
-    "TIVO": "q",
-    "Left": "a",
-    "Up": "w",
-    "Right": "d",
-    "Down": "s",
-    "Ok": Key.enter,
-    # "TVSource": "TVSource",
-    # "Language": "Language",
-    # "Zoom": "Zoom",
-    # "Guide": Key.home,
-    # "Info": Key.end,
-    # "ShowTV": "ShowTV",
-
-    "TVVolumeUp": "+",
-    "TVVolumeDown": "-",
-    "TVMute": "mute",
-
-    # "ProgUp": Key.page_up,
-    # "ProgDown": Key.page_down,
-    # "Dislike": "Dislike",
-    # "Rec": "Rec",
-    # "Like": "Like",
-
-    "Play": Key.space,
-    "Pause": Key.space,
-    "Prev": Key.left,
-    "Next": Key.right,
-    "Back": "Back",
-    # "Slow": "Slow",
-    # "GoOn": "GoOn",
-    # "Videoclub": "Videoclub",
-
-    "Red": Key.f1,
-    "Green": Key.f2,
-    "Yellow": Key.f3,
-    "Blue": Key.f3,
-    "1": "1",
-    "2": "2",
-    "3": "3",
-    "4": "4",
-    "5": "5",
-    "6": "6",
-    "7": "7",
-    "8": "8",
-    "9": "9",
-    # "0x3a10c4c03": "C",
-    "0": "0",
-    "Enter": Key.backspace,
-}
-
 
 class keyboardTranslator():
 
@@ -96,13 +39,18 @@ class keyboardTranslator():
         if not self.config.has_section("DS4MAP"):
             print("ERROR - Config has not section DS4MAP.")
             os._exit(2)
+
+        if not self.config.has_section("IRMAP"):
+            print("ERROR - Config has not section IRMAP.")
+            os._exit(3)
         
         if not control.has_section("CONTROL"):
             print("ERROR - Config has not section CONTROL.")
-            os._exit(3)
+            os._exit(4)
         
         self.apiPath = self.config["API"]["path"]
         self.DS4MAP = self.config["DS4MAP"]
+        self.IRMAP = self.config["IRMAP"]
 
         self.config.add_section("CONTROL")
         self.config["CONTROL"] = control["CONTROL"]
@@ -165,8 +113,8 @@ class keyboardTranslator():
                     requests.get(f"{self.apiPath}/tv/channel?number={keyDown}")
                 except:
                     pass
-        elif keyDown in IRMAP.keys():
-            self.sendKey(IRMAP[keyDown])
+        elif keyDown in self.IRMAP.keys():
+            self.sendKey(self.IRMAP[keyDown])
 
     def start(self):
         self.controller.start()
