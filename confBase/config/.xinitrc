@@ -3,6 +3,9 @@ xset s off
 xset -dpms
 xset s noblank
 
+. /etc/productConf/start.conf
+
+/usr/bin/changeResolution.py -r $default_resolution
 python3 /usr/bin/cgAPI.py > /var/log/product/api.log 2>&1 &
 python3 /usr/bin/keyboardTranslator.py &
 
