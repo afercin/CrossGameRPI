@@ -93,7 +93,7 @@ def initializeMediaModule(app: Flask, config: configparser.ConfigParser):
     def launch():
         name = request.args["name"]
         emulator = request.args["emulator"]
-        if name == "steam":
+        if name == "Steam":
             os.system("touch /tmp/steam.mode && restartx")
         for game in getGamesByEmulator(emulator):
             if name in game["name"]:
