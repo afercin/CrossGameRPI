@@ -14,15 +14,15 @@ def getFilesByPath(startPath):
 
 def openSubprocess(program, args, file, resolution, center=True):
     if resolution:
-        window = subprocess.Popen(["/usr/bin/blackWindow.py"])
+        window = subprocess.Popen(["/usr/bin/blackWindow"])
         os.system(
-            f"python3 /usr/bin/changeResolution.py -r {resolution}" + (" -c" if center else ""))
+            f"python3 /usr/bin/changeResolution -r {resolution}" + (" -c" if center else ""))
 
     subprocess.call(
         [program] + str(args).split(";") + [file])
 
     if resolution:
-        os.system(f"python3 /usr/bin/changeResolution.py -r 1920x1080")
+        os.system(f"python3 /usr/bin/changeResolution -r 1920x1080")
         window.kill()
 
 

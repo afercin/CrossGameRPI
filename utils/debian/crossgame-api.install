@@ -1,3 +1,0 @@
-etc/productConf/api.ini /etc/productConf
-source/cgAPI.py /usr/bin
-source/apiModules /usr/bin

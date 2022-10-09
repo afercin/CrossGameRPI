@@ -6,7 +6,7 @@ import subprocess
 import os
 
 
-def sinkList() -> int:
+def sinkList():
     rawText = subprocess.getoutput("pacmd list-sinks")
     sinks = {}
     for line in rawText.split("\n"):
@@ -68,6 +68,8 @@ def initializeSystemModule(app: Flask, config: configparser.ConfigParser):
     # Utils
     @app.route(f"{API_PATH}/system/restartx", methods=["GET"])
     def close():
+        play(QUIT_SOUND)
+        return os.system("killall crossgameapp") == 0
         def restartx(controlFile):
             if os.path.isfile(controlFile):
                 os.remove(controlFile)

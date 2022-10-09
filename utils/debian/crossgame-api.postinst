@@ -1,8 +1,0 @@
-#!/bin/bash
-#Instalar librerías de python
-pythonDependencies=("pydub" "selenium" "pyautogui")
-
-for dependency in ${pythonDependencies[@]}; do
-    echo "Installing $dependency"
-    pip3 install $dependency
-done 

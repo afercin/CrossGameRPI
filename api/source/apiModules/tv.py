@@ -32,25 +32,27 @@ class tvHandler:
         return webdriver.Chrome(chrome_options=chrome_options)
 
     def updateChannels(self):
-        request = requests.get(self.config["TV"]["channelList"]).json()
         with open(CHANNELS_FILE) as f:
             localList = json.load(f)
         self.channels = localList["channels"]
+        try:
+            request = requests.get(self.config["TV"]["channelList"]).json()
+            if request["updated"] <= localList["updated"]:
+                return
 
-        if request["updated"] <= localList["updated"]:
-            return
+            for ambit in request["countries"][0]["ambits"]:
+                for ambitChannel in ambit['channels']:
+                    for channel in localList["channels"]:
+                        if channel["name"] == ambitChannel["name"]:
+                            channel["url"] = ambitChannel["web"]
+                            channel["logo"] = ambitChannel["logo"]
+                            break
 
-        for ambit in request["countries"][0]["ambits"]:
-            for ambitChannel in ambit['channels']:
-                for channel in localList["channels"]:
-                    if channel["name"] == ambitChannel["name"]:
-                        channel["url"] = ambitChannel["web"]
-                        channel["logo"] = ambitChannel["logo"]
-                        break
-
-        localList["updated"] = request["updated"]
-        with open(CHANNELS_FILE, 'w') as f:
-            json.dump(localList, f)
+            localList["updated"] = request["updated"]
+            with open(CHANNELS_FILE, 'w') as f:
+                json.dump(localList, f)
+        except Exception as e:
+            print(e)
 
     def close(self):
         value = True
@@ -95,7 +97,7 @@ class tvHandler:
         elif "rtve" in url:
             self.rtve.setChannel(url)
         else:
-            self.driver.get(url)
+            os.system(f"chromium-browser --kiosk --window-position=0,0 --window-size=1920,1080 --use-gl=egl {url}")
 
         return True
 

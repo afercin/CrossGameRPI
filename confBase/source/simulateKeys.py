@@ -37,11 +37,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hsc")
     except getopt.GetoptError:
-        print("simulateKeys.py -c")
+        print("simulateKeys -c")
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print("simulateKeys.py -c")
+            print("simulateKeys -c")
             sys.exit()
         elif opt == "-c":
             cflag = True
