@@ -1,0 +1,2 @@
+input/config/*      /etc/productConf
+input/_build/*      /usr/bin

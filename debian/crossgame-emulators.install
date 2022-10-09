@@ -1,0 +1,3 @@
+emulators/home/*            /home/
+emulators/usr/*             /usr/
+emulators/build_scripts/*  /opt/build_emulators

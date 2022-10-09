@@ -124,6 +124,6 @@ if [[ $(who am i | awk '{ print $2 }') =~ "tty" ]]; then
 
     while [[ ! -f "/tmp/debug" ]]; do
         clear
-        startx -- -nocursor > /tmp/xserver.log 2>&1
+        crossinit
     done
 fi

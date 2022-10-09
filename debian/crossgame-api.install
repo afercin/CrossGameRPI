@@ -1,0 +1,2 @@
+api/conf/*      /etc/productConf
+api/_build/*    /usr/bin

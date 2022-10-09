@@ -10,18 +10,7 @@ services:
          - ..:/src
         command: bash -c "
             rm -rf /src/release/*
-            && cd emulators
-            && dpkg-buildpackage -b -us -uc
-            && cd ../confBase
-            && dpkg-buildpackage -b -us -uc
-            && cd ../utils
-            && dpkg-buildpackage -b -us -uc
-            && cd ../plymouth
-            && dpkg-buildpackage -b -us -uc
-            && mv /src/*.deb /src/release
-            && rm -rf /src/*.buildinfo /src/*.changes
-            && rm -rf $$(find /src -name "*.debhelper*")
-            && rm -rf /src/*/debian/*.substvars /src/*/debian/files"
+            && /src/build.sh"
     app-compiler:
         container_name: crossgame.compiler
         image: electronuserland/builder

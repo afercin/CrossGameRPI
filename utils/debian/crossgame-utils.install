@@ -1,4 +1,0 @@
-source/event.py /usr/bin
-source/blackWindow.py /usr/bin
-source/logger.py /usr/bin
-source/changeResolution.py /usr/bin
