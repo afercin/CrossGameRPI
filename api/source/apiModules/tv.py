@@ -90,6 +90,9 @@ class tvHandler:
         self.currentChannel = number
         url = self.channels[number-1]["url"]
 
+        return self.setUrl(url)
+    
+    def setUrl(self, url):
         if "atresplayer" in url:
             self.atresplayer.setChannel(url)
         elif "mitele" in url:
@@ -97,7 +100,7 @@ class tvHandler:
         elif "rtve" in url:
             self.rtve.setChannel(url)
         else:
-            os.system(f"chromium-browser --kiosk --window-position=0,0 --window-size=1920,1080 --use-gl=egl {url}")
+            os.system(f"chromium-browser {self.config['TV']['chromeOptions'].replace(';', ' ')} {url}")
 
         return True
 
@@ -116,6 +119,11 @@ def initializeTvModule(app: Flask, config: configparser.ConfigParser):
     def set_channel():
         number = request.args["number"]
         return jsonify({"result": "success" if tv.setChannel(int(number)) else "fail"})
+
+    @app.route(f"{API_PATH}/tv/url", methods=["POST"])
+    def set_url():
+        url = request.args["url"]
+        return jsonify({"result": "success" if tv.setUrl(url) else "fail"})
 
     @app.route(f"{API_PATH}/tv/channel-down", methods=["GET"])
     def set_channelDown():
