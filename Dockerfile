@@ -34,8 +34,6 @@ RUN apt-get update \
     libjpeg-dev \
     zlib1g-dev
 
-RUN pip3 install -U  pyinstaller \
-    pydub \
-    selenium \
-    pyautogui \
-    requests
+COPY requeriments.txt requeriments.txt
+
+RUN pip3 install -U -r requeriments.txt

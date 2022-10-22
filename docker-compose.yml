@@ -7,7 +7,7 @@ services:
         build: .
         working_dir: /src
         volumes:
-         - ..:/src
+         - .:/src
         command: bash -c "
             rm -rf /src/release/*
             && /src/build.sh"
@@ -16,8 +16,8 @@ services:
         image: electronuserland/builder
         working_dir: /app
         volumes:
-         - ../../CrossGameApp:/app
-         - ../release:/release
+         - ../CrossGameApp:/app
+         - ./release:/release
         command: bash -c "
             npm run dist_armhf
             && cp ./dist/crossgame*armv7l.deb /release
