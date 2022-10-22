@@ -1,3 +1,4 @@
+from sre_constants import SUCCESS
 from flask import Flask, request, jsonify
 from pydub.playback import play
 from pydub import AudioSegment
@@ -69,22 +70,11 @@ def initializeSystemModule(app: Flask, config: configparser.ConfigParser):
     @app.route(f"{API_PATH}/system/restartx", methods=["GET"])
     def close():
         play(QUIT_SOUND)
-        return os.system("killall crossgameapp") == 0
-        def restartx(controlFile):
-            if os.path.isfile(controlFile):
-                os.remove(controlFile)
-                play(QUIT_SOUND)
-                return os.system("killall crossgameapp") == 0
-            return False
-
-        result = "fail"
-        with open(CROSSGAME_MODE_FILE) as f:
-            mode = f.read()
-            if mode == "games" and restartx(EMULATOR_CONTROL_FILE) or \
-               mode == "tv" and restartx(TV_CONTROL_FILE):
-                result = "success"
-
-        return jsonify({"result": result})
+        for control_file in (EMULATOR_CONTROL_FILE, TV_CONTROL_FILE):
+            if os.path.isfile(control_file):
+                os.remove(control_file)
+        
+        return jsonify({"result": "success" if os.system("restartx") == 0 else "fail"})
 
     @app.route(f"{API_PATH}/system/mode", methods=["GET"])
     def get_crossgame_mode():

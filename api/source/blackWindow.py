@@ -10,6 +10,7 @@ class tkWindow(tkinter.Tk):
 
         #self.attributes("-fullscreen", True)
         self.geometry(geometry)
+        self.config(cursor="none")
 
         self.WIDTH = geometry.split("x")[0]
         self.HEIGHT = geometry.split("x")[1]
