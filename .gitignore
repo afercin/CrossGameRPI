@@ -3,6 +3,7 @@
 .venv/
 
 crossgame-*/
+debian/usbmount/
 */_build/
 files
 *debhelper*
