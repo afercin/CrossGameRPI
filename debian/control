@@ -13,7 +13,7 @@ Description: CrossGame emulators compatibility
 
 Package: crossgame-conf-base
 Architecture: all
-Depends: crossgame-emulators, crossgameapp, crossgame-input,
+Depends: crossgame-emulators, crossgameapp, crossgame-input, crossgame-plymouth
  xinit, x11-xserver-utils, ifupdown, xserver-common, xserver-xorg-core, xserver-xorg,
  xserver-xorg-legacy, xserver-xorg-video-fbdev, xterm, xserver-xorg-video-all, 
  libgles2-mesa, libgles2-mesa-dev, xorg-dev, wget, net-tools, pulseaudio, ssh, bluetooth, 
@@ -35,6 +35,13 @@ Architecture: all
 Depends: crossgame-api, rpi.gpio-common, python3-rpi.gpio, python3-pip
 Maintainer: Internal Pointers <info@internalpointers.com>
 Description: CrossGame emulators compatibility
+
+Package: crossgame-plymouth
+Architecture: all
+Depends: plymouth, plymouth-themes
+Maintainer: Internal Pointers <info@internalpointers.com>
+Description: A program that greets you.
+ You can add a longer description here. Mind the space at the beginning of this paragraph.
 
 Package: crossgame-steamlink
 Architecture: all
