@@ -1,6 +1,3 @@
-confBase/etc/*              /etc
-confBase/_build/*           /usr/bin
-confBase/.bashrc            /home/crossgame
-confBase/.xinitrc           /home/crossgame
-confBase/authorized_keys    /home/crossgame/.ssh
-confBase/authorized_keys    /root/.ssh
+confBase/etc/*  /etc
+confBase/bin/*  /usr/local/bin
+confBase/home/* /home/crossgame
