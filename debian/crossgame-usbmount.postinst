@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+if [ "$1" = install ]; then
+    sed -i 's/PrivateMounts=yes/PrivateMounts=no/g' /lib/systemd/system/systemd-udevd.service
+fi
+
+exit 0

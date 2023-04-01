@@ -5,7 +5,7 @@ set -e
 if [ "$1" = remove ]; then
     rm -f /var/run/usbmount/*
     if [ -f /etc/usbmount/usbmount.conf.back ]; then
-	mv /etc/usbmount/usbmount.conf.back /etc/usbmount/usbmount.conf
+	    mv /etc/usbmount/usbmount.conf.back /etc/usbmount/usbmount.conf
     fi
 fi
 

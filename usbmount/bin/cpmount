@@ -1,0 +1,16 @@
+#!/bin/bash
+
+usb=
+for ((i = 0 ; i < 8 ; i++)); do
+    if ! mountpoint -q /media/usb$i; then
+        usb="usb$i"
+        break
+    fi
+done
+
+if [[ -n $usb ]]; then
+    /usr/bin/pmount --umask 000 --noatime -w --sync $1 $usb
+else
+    echo "No mountpoints available!"
+fi
+

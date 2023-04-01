@@ -1,0 +1,3 @@
+usbmount/rules/*    etc/udev/rules.d/
+usbmount/service/*  lib/systemd/system/
+usbmount/bin/*      usr/local/bin
