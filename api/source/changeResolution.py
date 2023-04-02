@@ -3,7 +3,8 @@ import sys
 import getopt
 import subprocess
 import os
-from screeninfo import get_monitors
+import requests
+import json
 
 
 def main(argv):
@@ -29,7 +30,7 @@ def main(argv):
 
     if rflag:
         x, y = resolution.split("x")
-        output = get_monitors()[0].name
+        output = json.loads(requests.get("http://localhost:5000/api/v1/system/screens").text)[0]["display"]
 
         if nflag:
             config = subprocess.check_output(

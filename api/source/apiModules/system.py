@@ -2,8 +2,10 @@ from sre_constants import SUCCESS
 from flask import Flask, request, jsonify
 from pydub.playback import play
 from pydub import AudioSegment
+from pyedid import parse_edid
 import configparser
 import subprocess
+import json
 import os
 
 
@@ -65,6 +67,38 @@ def initializeSystemModule(app: Flask, config: configparser.ConfigParser):
     @app.route(f"{API_PATH}/system/audio/toogle", methods=["GET"])
     def toogle_audio(): return jsonify(
         {"result": "success" if setVolume("toggle", True) else "fail"})
+    
+    # Screens
+    @app.route(f"{API_PATH}/system/screens", methods=["GET"])
+    def get_screens():
+        output = subprocess.getoutput("xrandr --props")
+        monitors = []
+        number = -1
+        edid = False
+        connected_displays = []
+
+        for line in output.split("\n"):
+            if not line.startswith("\t") and not line.startswith(" "):
+                number += 1
+                monitors.append({"name": line.split(" ")[0], "edid": "", "resolutions": []})
+            if line.startswith(" "):
+                resolution, refresh_rate = line.strip().split(None, 1)
+                monitors[number]["resolutions"].append({"resolution": resolution, "refresh_rate": refresh_rate.split()})
+            elif "EDID" in line:
+                monitors[number]["edid"] = ""
+                edid = True
+            elif edid and line.startswith("\t\t"):
+                monitors[number]["edid"] += f"{line.strip()}\n"
+            else:
+                edid = False
+            
+        for monitor in monitors:
+            if monitor["edid"]:
+                monitor_info = json.loads(str(parse_edid(monitor["edid"])))
+                monitor_info["display"] = monitor["name"]
+                monitor_info["resolutions"] = monitor["resolutions"]
+                connected_displays.append(monitor_info)
+        return jsonify(connected_displays)
 
     # Utils
     @app.route(f"{API_PATH}/system/restartx", methods=["GET"])
@@ -93,6 +127,8 @@ def initializeSystemModule(app: Flask, config: configparser.ConfigParser):
 
         setSink(config["DEFAULT"]["sink"])
         setVolume(str(config["DEFAULT"]["volume"]) + "%")
+        if not os.system(f"changeResolution -r {config['DEFAULT']['resolution']}"):
+            return jsonify({"result": "fail"})
         return jsonify({"result": "success"})
 
     # Bluetooth
