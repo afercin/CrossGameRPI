@@ -1,3 +1,4 @@
-confBase/etc/*  /etc
-confBase/bin/*  /usr/local/bin
-confBase/home/* /home/crossgame
+confBase/etc/*      /etc
+confBase/bin/*      /usr/local/bin
+confBase/.bashrc    /home/crossgame
+confBase/.xinitrc   /home/crossgame

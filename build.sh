@@ -14,5 +14,5 @@ ls -l /src/release
 
 rm -f *.buildinfo
 rm -f *.changes
-rm $(find . -name "*.x.c")
-rm $(find . -name "*.spec")
+rm $(find . -name "*.x.c") || :
+rm $(find . -name "*.spec") || :
