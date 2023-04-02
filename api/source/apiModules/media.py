@@ -3,6 +3,8 @@ import configparser
 import subprocess
 import os
 
+DEFAULT_RESOLUTION = "1920x1080"
+
 
 def getFilesByPath(startPath):
     files = []
@@ -14,7 +16,6 @@ def getFilesByPath(startPath):
 
 def openSubprocess(program, args, file, resolution, center=True):
     if resolution:
-        window = subprocess.Popen(["/usr/bin/blackWindow"])
         os.system(
             f"changeResolution -r {resolution}" + (" -c" if center else ""))
 
@@ -22,8 +23,7 @@ def openSubprocess(program, args, file, resolution, center=True):
         [program] + str(args).split(";") + [file])
 
     if resolution:
-        os.system(f"changeResolution -r 1920x1080")
-        window.kill()
+        os.system(f"changeResolution -r {DEFAULT_RESOLUTION}")
 
 
 def initializeMediaModule(app: Flask, config: configparser.ConfigParser):
@@ -33,6 +33,7 @@ def initializeMediaModule(app: Flask, config: configparser.ConfigParser):
     VIDEOS_PATH = config["PATH"]["videos"]
 
     EMULATOR_CONTROL_FILE = config["CONTROL"]["emulator"]
+    DEFAULT_RESOLUTION = config["DEFAULT"]["resolution"]
 
     # Images
     @app.route(f"{API_PATH}/game/images", methods=["GET"])
@@ -136,7 +137,7 @@ def initializeMediaModule(app: Flask, config: configparser.ConfigParser):
     # Videos
 
     @app.route(f"{API_PATH}/videos", methods=["GET"])
-    def get_videos(): 
+    def get_videos():
         videos = getFilesByPath(VIDEOS_PATH)
         for i in range(8):
             if os.path.exists(f"/media/usb{i}/video"):

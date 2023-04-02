@@ -15,8 +15,6 @@ clean:
 scriptSource:
 	mkdir -p _build/
 
-	pyinstaller --onefile source/blackWindow.py --distpath _build/ --workpath /tmp/
-
 	pyinstaller --onefile source/changeResolution.py --distpath _build/ --workpath /tmp/
 
 	cp source/cgAPI.py _build/
