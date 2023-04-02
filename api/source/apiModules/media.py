@@ -136,4 +136,11 @@ def initializeMediaModule(app: Flask, config: configparser.ConfigParser):
     # Videos
 
     @app.route(f"{API_PATH}/videos", methods=["GET"])
-    def get_videos(): return jsonify(getFilesByPath(VIDEOS_PATH))
+    def get_videos(): 
+        videos = getFilesByPath(VIDEOS_PATH)
+        for i in range(8):
+            if os.path.exists(f"/media/usb{i}/video"):
+                videos += getFilesByPath(f"/media/usb{i}/video")
+            if os.path.exists(f"/media/usb{i}/Videos"):
+                videos += getFilesByPath(f"/media/usb{i}/Videos")
+        return jsonify(videos)
