@@ -156,7 +156,7 @@ class controllerHook(Observer):
             show = False
 
             # 1536 joys and triggers
-            for event in pygame.event.get(eventtype=(self.axis, self.dPad, self.buttonDown, self.buttonUp)):
+            for event in pygame.event.get((self.axis, self.dPad, self.buttonDown, self.buttonUp)):
                 if event.type == self.dPad:
                     x, y = event.value
 

@@ -1,2 +1,2 @@
-api/conf/*      /etc/productConf
-api/_build/*    /usr/bin
+api/conf/*  /etc/productConf
+api/bin/*   /usr/local/bin

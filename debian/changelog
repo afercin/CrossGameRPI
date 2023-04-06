@@ -1,6 +1,10 @@
-crossgame-rpi (0.3.0) UNRELEASED; urgency=medium
+crossgame-rpi (0.4.0) UNRELEASED; urgency=medium
 
+  [ Adrián Fernández Cintado ]
   * Initial release. (Closes: #XXXXXX)
   * Refactor packages and api changes
 
- -- Adrián Fernández Cintado <adrix@adrix-Latitude-5511>  Sun, 09 Oct 2022 16:55:17 +0200
+  [ adrix ]
+  * Minor quality of life changes
+
+ -- adrix <adrix@adrix-Latitude-5511>  Sun, 02 Apr 2023 20:45:49 +0200

@@ -17,13 +17,13 @@ def getFilesByPath(startPath):
 def openSubprocess(program, args, file, resolution, center=True):
     if resolution:
         os.system(
-            f"changeResolution -r {resolution}" + (" -c" if center else ""))
+            f"changeResolution.py -r {resolution}" + (" -c" if center else ""))
 
     subprocess.call(
         [program] + str(args).split(";") + [file])
 
     if resolution:
-        os.system(f"changeResolution -r {DEFAULT_RESOLUTION}")
+        os.system(f"changeResolution.py -r {DEFAULT_RESOLUTION}")
 
 
 def initializeMediaModule(app: Flask, config: configparser.ConfigParser):

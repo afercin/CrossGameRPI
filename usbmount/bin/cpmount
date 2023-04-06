@@ -1,5 +1,12 @@
 #!/bin/bash
 
+partID=$(blkid | grep sda1 | tr " " "\n" | grep PARTUUID | awk -F '"' '{ print $2 }')
+
+if [[ $partID == "9174aa46-01" ]]; then
+    mount $1 /rpi
+    exit 0
+fi
+
 usb=
 for ((i = 0 ; i < 8 ; i++)); do
     if ! mountpoint -q /media/usb$i; then

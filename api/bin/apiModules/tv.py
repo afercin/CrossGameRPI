@@ -8,10 +8,7 @@ import requests
 import json
 import os
 
-
-CHANNELS_FILE = "/etc/productConf/channels.json"
-if "dev" in os.path.abspath(os.getcwd()):
-    CHANNELS_FILE = "/home/adrix/personal_dev/CrossGameRPI/utils" + CHANNELS_FILE
+CHANNELS_ROOT_FOLDER = "/etc/productConf/"
 
 
 class tvHandler:
@@ -32,7 +29,7 @@ class tvHandler:
         return webdriver.Chrome(chrome_options=chrome_options)
 
     def updateChannels(self):
-        with open(CHANNELS_FILE) as f:
+        with open(f"{CHANNELS_ROOT_FOLDER}/channels.json") as f:
             localList = json.load(f)
         self.channels = localList["channels"]
         try:
@@ -49,10 +46,14 @@ class tvHandler:
                             break
 
             localList["updated"] = request["updated"]
-            with open(CHANNELS_FILE, 'w') as f:
+            with open(f"{CHANNELS_ROOT_FOLDER}/channels.json", 'w') as f:
                 json.dump(localList, f)
         except Exception as e:
             print(e)
+        finally:
+            for filename in os.listdir(f"{CHANNELS_ROOT_FOLDER}/channels.d"):
+                with open(os.path.join(f"{CHANNELS_ROOT_FOLDER}/channels.d", filename)) as f:
+                    self.channels += json.load(f)
 
     def close(self):
         value = True
@@ -91,7 +92,7 @@ class tvHandler:
         url = self.channels[number-1]["url"]
 
         return self.setUrl(url)
-    
+
     def setUrl(self, url):
         if "atresplayer" in url:
             self.atresplayer.setChannel(url)
@@ -100,7 +101,8 @@ class tvHandler:
         elif "rtve" in url:
             self.rtve.setChannel(url)
         else:
-            os.system(f"chromium-browser {self.config['TV']['chromeOptions'].replace(';', ' ')} {url}")
+            os.system(
+                f"chromium-browser {self.config['TV']['chromeOptions'].replace(';', ' ')} {url}")
 
         return True
 

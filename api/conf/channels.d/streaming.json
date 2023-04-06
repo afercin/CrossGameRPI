@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Netflix",
+        "url": "https://www.netflix.com/es/",
+        "logo": "https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI"
+      },
+      {
+        "name": "Youtube",
+        "url": "https://www.youtube.com/",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Youtube_logo_detail.png/640px-Youtube_logo_detail.png"
+      },
+      {
+        "name": "Prime Video",
+        "url": "https://www.primevideo.com/",
+        "logo": "http://store-images.s-microsoft.com/image/apps.32357.14618985536919905.4b30e4f3-f7a1-4421-840c-2cc97b10e8e0.6e7a96f1-33ad-4447-8e2b-7de730f9a05e"
+      }
+]

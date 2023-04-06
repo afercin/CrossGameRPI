@@ -127,7 +127,7 @@ def initializeSystemModule(app: Flask, config: configparser.ConfigParser):
 
         setSink(config["DEFAULT"]["sink"])
         setVolume(str(config["DEFAULT"]["volume"]) + "%")
-        if not os.system(f"changeResolution -r {config['DEFAULT']['resolution']}"):
+        if not os.system(f"changeResolution.py -r {config['DEFAULT']['resolution']}"):
             return jsonify({"result": "fail"})
         return jsonify({"result": "success"})
 

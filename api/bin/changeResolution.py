@@ -14,11 +14,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hncr:", ["ifile=", "ofile="])
     except getopt.GetoptError:
-        print("changeResolution -r <resolution> [-c] [-n]")
+        print("changeResolution.py -r <resolution> [-c] [-n]")
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print("changeResolution -r <resolution> [-c] [-n]")
+            print("changeResolution.py -r <resolution> [-c] [-n]")
             sys.exit()
         elif opt == "-r":
             rflag = True
