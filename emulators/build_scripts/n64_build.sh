@@ -2,8 +2,8 @@
 
 set -e
 
-[[ ! -f /opt/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
-. /opt/common.sh
+[[ ! -f /opt/build_scripts/common.sh ]] && echo "[ERROR] No se encuentra el script common" && exit 1
+. /opt//build_scripts/common.sh
 
 ## Variables
 CODE_FOLDER="${GIT_FOLDER}/n64"
@@ -38,13 +38,11 @@ for component in ${COMPONENTS}; do
     fi
     echo
 
-    if [[ $component =~ (ui-console|audio-sdl|input-sdl|video-glide64mk2)$ ]]; then
-        echo "### Compiling ${component} binaries"
-        echo
+    echo "### Compiling ${component} binaries"
+    echo
 
-        make -C "${COMPONENT_FOLDER}/projects/unix" all
-        make -C "${COMPONENT_FOLDER}/projects/unix" install
-    
-        echo
-    fi
+    make -C "${COMPONENT_FOLDER}/projects/unix" all
+    make -C "${COMPONENT_FOLDER}/projects/unix" install
+
+    echo
 done

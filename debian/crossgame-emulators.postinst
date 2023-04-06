@@ -1,17 +1,27 @@
 #!/bin/bash
 
-if [[ -z "/home/crossgame/.local/share/duckstation/memcards" ]]; then
+if ! [[ -L "/home/crossgame/.local/share/duckstation/memcards" ]]; then
     echo "Creating PS1 memcards folder soft link..."
+    mkdir -p "home/crossgame/.local/share/duckstation"
+    [[ -d "/home/crossgame/.local/share/duckstation/memcards" ]] && rmdir "/home/crossgame/.local/share/duckstation/memcards"
     ln -s "/rpi/content/memcards/ps1" "/home/crossgame/.local/share/duckstation/memcards"
+    chown crossgame:crossgame "/home/crossgame/.local/share/duckstation/memcards"
 fi
 
-if [[ -z "/home/crossgame/.config/ppsspp/PSP/SAVEDATA" ]]; then
+
+if ! [[ -L "/home/crossgame/.config/ppsspp/PSP/SAVEDATA" ]]; then
     echo "Creating PSP memcards folder soft link..."
+    mkdir -p "/home/crossgame/.config/ppsspp/PSP"
+    [[ -d "/home/crossgame/.config/ppsspp/PSP/SAVEDATA" ]] && rmdir "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
     ln -s "/rpi/content/memcards/psp" "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
+    chown -R crossgame:crossgame "/home/crossgame/.config/ppsspp/PSP/SAVEDATA"
 fi
 
-if [[ -z "/home/crossgame/.local/share/mupen64plus/save" ]]; then
+if ! [[ -L "/home/crossgame/.local/share/mupen64plus/save" ]]; then
     echo "Creating N64 memcards folder soft link..."
-    mkdir -p "/home/crossgame/.local/share/mupen64plus/save"
+    mkdir -p "/home/crossgame/.local/share/mupen64plus"
+    [[ -d "home/crossgame/.local/share/mupen64plus/save" ]] && rmdir "home/crossgame/.local/share/mupen64plus/save"
     ln -s "/rpi/content/memcards/n64" "/home/crossgame/.local/share/mupen64plus/save"
+    chown -R crossgame:crossgame "/home/crossgame/.local/share/mupen64plus/save"
 fi
+
