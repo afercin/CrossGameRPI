@@ -4,7 +4,11 @@ from apiModules.media import initializeMediaModule
 from apiModules.tv import initializeTvModule
 from flask import Flask
 import configparser
+import pyautogui
 import os
+
+pyautogui.FAILSAFE = False
+pyautogui.moveTo(1920, 1080)
 
 CONFFILE = "/etc/productConf/api.ini"
 if "dev" in os.path.abspath(os.getcwd()):
